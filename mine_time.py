@@ -1,5 +1,5 @@
-import sweeperlib
 import random
+import sweeperlib
 
 state = {
     "field": []
@@ -44,17 +44,17 @@ def main():
     sweeperlib.start()
 
 if __name__ == "__main__":
-    max_x = 15
-    max_y = 10
-    field = []
-    for row in range(max_y):
-        field.append([])
-        for col in range(max_x):
-            field[-1].append(" ")
-    state["field"] = field
+    MAX_X = 15
+    MAX_Y = 10
+    field_local = []
+    for row in range(MAX_Y):
+        field_local.append([])
+        for col in range(MAX_X):
+            field_local[-1].append(" ")
+    state["field"] = field_local
     available = []
-    for x in range(max_x):
-        for y in range(max_y):
+    for x in range(MAX_X):
+        for y in range(MAX_Y):
             available.append((x, y))
     place_mines(state["field"], available, 10)
     main()
