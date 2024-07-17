@@ -24,7 +24,7 @@ def draw_field():
     """
     sweeperlib.clear_window()
     sweeperlib.begin_sprite_draw()
-    for row_index, row in enumerate(state):
+    for row_index, row in enumerate(state["field"]):
         for col_index, _ in enumerate(row):
             sweeperlib.prepare_sprite(
                     state["field"][row_index][col_index],
