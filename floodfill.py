@@ -8,8 +8,8 @@ def floodfill(planet: list[list[str]], x_pos: int, y_pos: int) -> None:
         return
 
     directions = [(-1, -1), (-1, 0), (-1, 1),
-                (0, -1),         (0, 1),
-                (1, -1), (1, 0), (1, 1)]
+                  (0, -1),         (0, 1),
+                  (1, -1), (1, 0), (1, 1)]
 
     to_explore: list[tuple[(int, int)]] = [(x_pos, y_pos)]
 
@@ -22,21 +22,21 @@ def floodfill(planet: list[list[str]], x_pos: int, y_pos: int) -> None:
 
         # Add surroundings into to_explore if unexplored
         surrounding_tiles: list[tuple[(int, int)]] = []
-        no_mines = True
+        #no_mines = True
         for dir_row, dir_col in directions:
             new_row, new_col = tile_y + dir_row, tile_x + dir_col
             # Check if new tile is inside
             if 0 <= new_row < len(planet) and 0 <= new_col < len(planet[0]):
-                # Check if the neighbor hasn't been explored
+                # Check if the neighbor hasn't been explored and is safe
                 if planet[new_row][new_col] == ' ':
                     surrounding_tiles.append((new_col, new_row))
                 # Check if the neighbor is a mine
-                if planet[new_row][new_col] == 'x':
+                #if planet[new_row][new_col] == 'x':
                     # don't add any neighbors to explore
-                    no_mines = False
-                    break
-        if no_mines:
-            to_explore.extend(surrounding_tiles)
+                    #no_mines = False
+                    #break
+        #if no_mines:
+        to_explore.extend(surrounding_tiles)
 
 def print_grid(grid: list[list[str]]) -> None:
     """
@@ -47,17 +47,22 @@ def print_grid(grid: list[list[str]]) -> None:
         print("|", " ".join(row), "|")
     print(" ", "- " * len(grid[0]))
 
-def main(planet: list[list[str]]):
-    print_grid(planet)
-    floodfill(planet, 1, 1)
-    print_grid(planet)
+def main(planet_input: list[list[str]]):
+    """
+    Loads the game graphics, creates a game window, and sets a draw handler
+    """
+    print_grid(planet_input)
+    floodfill(planet_input, 0, 4)
+    print_grid(planet_input)
 
-planet = [
-    [" ", " ", "x", " ", " "], 
-    [" ", " ", "x", " ", " "], 
-    ["x", "x", "x", "x", "x"], 
-    [" ", " ", "x", " ", " "], 
-    [" ", " ", "x", " ", " "], 
+planet_in = [
+    [' ', ' ', ' ', ' ', 'x', 'x'],
+    [' ', 'x', ' ', 'x', ' ', ' '],
+    [' ', 'x', ' ', ' ', ' ', 'x'],
+    [' ', ' ', 'x', 'x', ' ', ' '],
+    ['x', 'x', 'x', 'x', ' ', ' '],
+    ['x', ' ', 'x', ' ', 'x', 'x'],
+    ['x', 'x', ' ', ' ', ' ', ' ']
 ]
 
-main(planet)
+main(planet_in)
