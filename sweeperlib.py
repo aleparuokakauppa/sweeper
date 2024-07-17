@@ -269,7 +269,7 @@ def set_draw_handler(handler):
     """
     Sets a function that is used for drawing the game's graphics - somewhat
     important. The handler is a function that doesn't have any parameters, and
-    it should daw the window's contents by using the following functions:
+    it should draw the window's contents by using the following functions:
     
     clear_window (clears away everything draw last iteration)
     draw_background (draws the background color)

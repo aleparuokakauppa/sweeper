@@ -30,12 +30,6 @@ def floodfill(planet: list[list[str]], x_pos: int, y_pos: int) -> None:
                 # Check if the neighbor hasn't been explored and is safe
                 if planet[new_row][new_col] == ' ':
                     surrounding_tiles.append((new_col, new_row))
-                # Check if the neighbor is a mine
-                #if planet[new_row][new_col] == 'x':
-                    # don't add any neighbors to explore
-                    #no_mines = False
-                    #break
-        #if no_mines:
         to_explore.extend(surrounding_tiles)
 
 def print_grid(grid: list[list[str]]) -> None:
