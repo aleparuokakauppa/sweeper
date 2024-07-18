@@ -28,8 +28,8 @@ def draw_field():
         for col_index, _ in enumerate(row):
             sweeperlib.prepare_sprite(
                     state["field"][row_index][col_index],
-                    col_index*40,
-                    row_index*40)
+                    col_index*64,
+                    row_index*64)
     sweeperlib.draw_sprites()
 
 

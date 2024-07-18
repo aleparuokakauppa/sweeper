@@ -22,7 +22,6 @@ def floodfill(planet: list[list[str]], x_pos: int, y_pos: int) -> None:
 
         # Add surroundings into to_explore if unexplored
         surrounding_tiles: list[tuple[(int, int)]] = []
-        #no_mines = True
         for dir_row, dir_col in directions:
             new_row, new_col = tile_y + dir_row, tile_x + dir_col
             # Check if new tile is inside
