@@ -88,22 +88,9 @@ def load_sprites(path):
     images["x"] = pyglet.resource.image("tile_mine.png")
     images[" "] = pyglet.resource.image("tile_back.png")
     images["f"] = pyglet.resource.image("tile_flag.png")
+    images["X"] = pyglet.resource.image("tile_mine_explode.png")
+    images["F"] = pyglet.resource.image("tile_mine_incorrect.png")
     graphics["images"] = images
-
-def load_duck(path):
-    """
-    Loads the necessary graphics for the duck game. This include the duck
-    itself (size 40x40) and a sling that can be used as an atmospheric prop
-    (size 80x150).
-    
-    :param str path: path to the sprites folder
-    """
-
-    pyglet.resource.path = [path]
-    duck = pyglet.resource.image("duck.png")
-    sling = pyglet.resource.image("sling.png")
-    graphics["images"]["duck"] = duck
-    graphics["images"]["sling"] = sling
 
 def create_window(width=800, height=600, bg_color=(240, 240, 240, 255)):
     """
@@ -128,6 +115,7 @@ def create_window(width=800, height=600, bg_color=(240, 240, 240, 255)):
         graphics["window"].on_close = close
     else:
         resize_window(width, height)
+
 
 def resize_window(width, height):
     """
@@ -172,6 +160,7 @@ def set_mouse_handler(handler):
         graphics["window"].on_mouse_press = handler
     else:
         print("Window hasn't been created!")
+
 
 def set_drag_handler(handler):
     """
