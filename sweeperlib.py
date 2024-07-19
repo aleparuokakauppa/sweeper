@@ -410,25 +410,4 @@ if __name__ == "__main__":
     # Disabling two pylint warnings because it would complain about the test
     # code despite it being perfectly valid.
     # pylint: disable=missing-docstring,unused-argument
-
-    # images are loaded from the sprites subfolder which must be in the same
-    # folder as this code file
-    load_sprites("sprites")
-    create_window()
-
-    def draw():
-        clear_window()
-        draw_background()
-        begin_sprite_draw()
-        for i, key in enumerate(graphics["images"].keys()):
-            prepare_sprite(key, i * 40, 10)
-
-        draw_sprites()
-
-    def close_window(x, y, button, mods):
-        close()
-
-    set_draw_handler(draw)
-    set_mouse_handler(close_window)
-
     start()

@@ -16,6 +16,8 @@ class Game:
     max_x_index: int
     max_y_index: int
 
+    board_size_px: tuple[(int, int)]
+
     def __init__(self, grid_x_max = 0, grid_y_max = 0):
         """
         Initializes the game field with blank tiles
@@ -27,6 +29,9 @@ class Game:
 
         self.game_field = np.full((grid_x_max, grid_y_max), ' ', '<U1')
 
+    def set_board_size(self, width: int, height: int):
+        self.board_size_px = (width, height)
+
     def init_mines(self, n_mines: int):
         """
         Places `n_mines` amount of mines randomly on the game_field
@@ -35,6 +40,11 @@ class Game:
         if n_mines <= 0:
             print("Not enough mines provided")
             return
+
+        max_mines = self.grid_x_size * self.grid_y_size
+        if n_mines > max_mines:
+            print(f"Too many mines! Using maximun amount ({max_mines}) mines.")
+            n_mines = max_mines
 
         allocated_mines: list[tuple[(int, int)]] = []
         while len(allocated_mines) <= n_mines:
@@ -82,11 +92,10 @@ class Game:
         """
         Counts the amount of mines around the given tile
         """
-        tile_x_pos = tile[0]
-        tile_y_pos = tile[1]
+        tile_x_pos, tile_y_pos = tile
 
         # Check if the given tile is within boundaries
-        if tile_x_pos < 0 or tile_y_pos < 0 or tile_x_pos >= self.grid_x_size or tile_y_pos >= self.grid_y_size:
+        if not (0 <= tile_x_pos < self.grid_x_size and 0 <= tile_y_pos < self.grid_y_size):
             return 0
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
@@ -118,17 +127,37 @@ class Game:
                         y_index * TILE_SPRITE_SIZE)
         sweeperlib.draw_sprites()
 
+    def get_tile_at_coordinates(self, x_pos: int, y_pos: int) -> tuple[(int, int)]:
+        x_index: int = round(x_pos / TILE_SPRITE_SIZE)
+        y_index: int = round(y_pos / TILE_SPRITE_SIZE)
+        return self.game_field[(x_index, y_index)]
+
     def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, mod: int):
-        # Check if the click is in the game-area
-        # if is, check what position the player clicked
-        # then attempt a guess
-        # then draw the new screen with updated information
-        pass
+        # Check if click was within the board
+        max_board_y, max_board_x = self.board_size_px
+        if x_pos <= 0 or x_pos > max_board_x or y_pos <= 0 or y_pos > max_board_y:
+            print("Click was outside of game board")
+            return
+
+        # Get the approximate clicked tile
+        selected_tile: tuple[(int, int)] = self.get_tile_at_coordinates(x_pos, y_pos)
+
+        # Match the mouse button with an action
+        match m_button:
+            case sweeperlib.MOUSE_LEFT:
+                self.guess_tile(selected_tile)
+            case sweeperlib.MOUSE_RIGHT:
+                # TODO
+                # Add a flag to the tile
+                pass
+
 
 def main():
     game = Game()
+    game.set_board_size(600, 400)
     sweeperlib.load_sprites("sprites")
-    sweeperlib.create_window(600, 400)
+    # Window size and board size exist independently
+    sweeperlib.create_window(*game.board_size_px)
     sweeperlib.set_draw_handler(game.draw_field)
     sweeperlib.set_mouse_handler(game.handle_mouse)
     sweeperlib.start()
