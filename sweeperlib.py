@@ -16,7 +16,7 @@ Regarding modifier keys:
 
 Modifier keys consist of shift, alt, ctrl etc. Pyglet gives them to input
 handler functions in a binary flag format (i.e. the state of all those keys
-as on integer where each bit corresponds to one flag). Binary AND operator (&)
+as an integer where each bit corresponds to one flag). Binary AND operator (&)
 is needed in order to obtain the state of an individual modifier key. This
 operator is more commonly encountered in embedded or othewise closely hardware
 related programming. We're not explaining it here, but we've given an example

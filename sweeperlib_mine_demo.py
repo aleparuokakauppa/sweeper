@@ -38,11 +38,6 @@ def draw_field():
     into a game window. This function is called whenever the game engine requests
     a screen update.
     """
-    for row in state_visible["field"]:
-        for col in row:
-            if state_visible["field"][row][col] == 'x':
-                print("MINE DETECTED")
-                break
     sweeperlib.clear_window()
     sweeperlib.begin_sprite_draw()
     #state_visible["field"][row_index][col_index],
