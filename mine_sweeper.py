@@ -48,8 +48,8 @@ class Game:
 
         allocated_mines: list[tuple[(int, int)]] = []
         while len(allocated_mines) <= n_mines:
-            rand_x = random.randint(0, self.grid_y_size)
-            rand_y = random.randint(0, self.grid_x_size)
+            rand_x = random.randint(0, self.max_x_index)
+            rand_y = random.randint(0, self.max_y_index)
             if (rand_x, rand_y) not in allocated_mines:
                 self.game_field[(rand_x, rand_y)] = 'x'
                 allocated_mines.append((rand_x, rand_y))
@@ -118,9 +118,8 @@ class Game:
         sweeperlib.begin_sprite_draw()
         for (x_index, y_index) in np.ndindex(self.game_field.shape):
             drawn_key: str = ' '
-            sel_tile = self.game_field[(x_index, y_index)]
-            if sel_tile != 'x':
-                drawn_key = str(self.count_surroundings(sel_tile))
+            if self.game_field[(x_index, y_index)] != 'x':
+                drawn_key = str(self.count_surroundings((x_index, y_index)))
             sweeperlib.prepare_sprite(
                         drawn_key,
                         x_index * TILE_SPRITE_SIZE,
@@ -153,13 +152,18 @@ class Game:
 
 
 def main():
-    game = Game()
-    game.set_board_size(600, 400)
+    game = Game(10, 10)
+    game.set_board_size(600, 600)
+    game.init_mines(20)
     sweeperlib.load_sprites("sprites")
     # Window size and board size exist independently
+    print("Sprites loaded")
     sweeperlib.create_window(*game.board_size_px)
+    print("Window created")
     sweeperlib.set_draw_handler(game.draw_field)
+    print("Draw handler set")
     sweeperlib.set_mouse_handler(game.handle_mouse)
+    print("Mouse handler set")
     sweeperlib.start()
 
 if __name__ == "__main__":
