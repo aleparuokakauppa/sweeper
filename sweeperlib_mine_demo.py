@@ -20,7 +20,6 @@ mouse_buttons = {
     4: "right",
 }
 
-
 def place_mines(field: list[list[str]],
                 valid_tiles: list[tuple[(int, int)]],
                 n_mines: int):
