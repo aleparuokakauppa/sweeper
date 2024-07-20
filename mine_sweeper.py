@@ -102,8 +102,8 @@ class Game:
             return
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
-                    (0, -1),         (0, 1),
-                    (1, -1), (1, 0), (1, 1)]
+                      ( 0, -1),          ( 0, 1),
+                      ( 1, -1), ( 1, 0), ( 1, 1)]
 
         to_explore: list[tuple[(int, int)]] = [tile]
 
@@ -144,8 +144,8 @@ class Game:
             return 0
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
-                    (0, -1),         (0, 1),
-                    (1, -1), (1, 0), (1, 1)]
+                      ( 0, -1),          ( 0, 1),
+                      ( 1, -1), ( 1, 0), ( 1, 1)]
         
         count = 0
         for dir_x, dir_y in directions:
