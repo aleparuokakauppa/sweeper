@@ -45,8 +45,8 @@ class Game:
 
         allocated_mines: list[tuple[(int, int)]] = []
         while len(allocated_mines) <= n_mines:
-            rand_x = random.randint(0, self.board_y_size - 1)
-            rand_y = random.randint(0, self.board_x_size - 1)
+            rand_y = random.randint(0, self.board_y_size - 1)
+            rand_x = random.randint(0, self.board_x_size - 1)
             if (rand_x, rand_y) not in allocated_mines:
                 self.set_tile_content((rand_x, rand_y), 'x')
                 allocated_mines.append((rand_x, rand_y))
@@ -60,8 +60,6 @@ class Game:
                     surrounding_mines_n = self.count_surroundings((x_index, y_index))
                     self.set_tile_content((x_index, y_index), str(surrounding_mines_n))
 
-        self.print_grid()
-
     def get_tile_content(self, position: tuple[(int, int)]) -> str:
         """
         Helper function for coordinate-like indexing
@@ -72,7 +70,7 @@ class Game:
         if 0 <= position[1] < len(self.game_board) and 0 <= position[0] < len(self.game_board[0]):
             return self.game_board[position[1]][position[0]]
         else:
-            print(f"No tile content. Position ({position[0]}, {position[1]}) was outside of board")
+            print(f"No tile content. Position {position} was outside of board")
             return ''
 
     def set_tile_content(self, position: tuple[(int, int)], content: str):
@@ -83,7 +81,7 @@ class Game:
         if 0 <= position[1] < len(self.game_board) and 0 <= position[0] < len(self.game_board[0]):
             self.game_board[position[1]][position[0]] = content
         else:
-            print(f"Cannot set content at ({position[0], position[1]})"
+            print(f"Cannot set content at {position} "
                   "is outside of game board")
 
     def set_board_size(self, width: int, height: int):
@@ -128,7 +126,6 @@ class Game:
         Counts the amount of mines around the given tile
         """
         tile_x_pos, tile_y_pos = tile
-        print(f"I'm tile ({tile_x_pos}, {tile_y_pos})")
 
         # Check if the given tile is within boundaries
         if not (0 <= tile_x_pos < self.board_x_size and 0 <= tile_y_pos < self.board_y_size):
@@ -143,10 +140,7 @@ class Game:
             new_x, new_y = tile_x_pos + dir_x, tile_y_pos + dir_y
             # Check if tile is inside
             if 0 <= new_x < self.board_y_size and 0 <= new_y < self.board_x_size:
-                contents = self.get_tile_content(tile)
-                print(f"contents: {contents}")
-                if contents == 'x':
-                    print("flag!!!!!!!")
+                if self.get_tile_content((new_x, new_y)) == 'x':
                     count += 1
         
         return count
@@ -199,14 +193,12 @@ class Game:
             print("|", " ".join(row), "|")
         print(" ", "- " * self.board_x_size)
 
-        #for row in grid:
-            #print("|", " ".join(row), "|")
-
 
 def main():
-    game = Game(4, 4)
+    game = Game(10, 15)
     game.set_board_size(600, 600)
-    game.init_field_contents(3)
+    game.init_field_contents(n_mines=15)
+    game.print_grid()
     sweeperlib.load_sprites("sprites")
     # Window size and board size exist independently
     print("Sprites loaded")
