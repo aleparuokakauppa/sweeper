@@ -27,12 +27,11 @@ class Game:
 
     def __init__(self, grid_x_max = 0, grid_y_max = 0):
         """
-        Initializes the game field with blank tiles
+        Initializes the `game_board` with blank tiles
         """
         self.board_x_size = grid_x_max
         self.board_y_size = grid_y_max
         self.game_board = []
-        # TODO check off by 1
         for _ in range(grid_y_max):
             row: list[str] = []
             for _ in range(grid_x_max):
@@ -40,11 +39,10 @@ class Game:
             self.game_board.append(row)
 
 
-    def init_field_contents(self, n_mines: int):
+    def set_tile_contents(self, n_mines: int):
         """
-        Places `n_mines` amount of mines randomly on the game_field
+        Places `n_mines` amount of mines randomly on the `game_board`
         """
-        # Keep track of this in the front end
         if n_mines <= 0:
             print("Not enough mines provided")
             return
@@ -62,9 +60,8 @@ class Game:
                 self.set_tile_content((rand_x, rand_y), 'x')
                 allocated_mines.append((rand_x, rand_y))
 
-        # Now go over the field and assign number of mines to each
-        # if the tile in question isn't a mine
-        print(f"Board sizes: x={self.board_x_size} y={self.board_y_size}")
+        # Sets the tile contents for each `game_tile` according to
+        # the amount of surrounding mines each has
         for y_index in range(self.board_y_size):
             for x_index in range(self.board_x_size):
                 if self.get_tile_content((x_index, y_index)) != 'x':
@@ -72,29 +69,30 @@ class Game:
                     self.set_tile_content((x_index, y_index), str(surrounding_mines_n))
 
 
-    def get_tile_content(self, position: tuple[(int, int)]) -> str:
+    def get_tile_content(self, tile: tuple[(int, int)]) -> str:
         """
         Helper function for coordinate-like indexing
         Returns the contents of the tile given in (x,y) format
         as a string
-        If position is outside of the board, returns '': str
+        Raises an `IndexError` if invalid tile
         """
-        if 0 <= position[1] < len(self.game_board) and 0 <= position[0] < len(self.game_board[0]):
-            return self.game_board[position[1]][position[0]]
+        if 0 <= tile[1] < len(self.game_board) and 0 <= tile[0] < len(self.game_board[0]):
+            return self.game_board[tile[1]][tile[0]]
         else:
-            print(f"No tile content. Position {position} was outside of board")
+            print(f"No tile content. Position {tile} was outside of board")
             raise IndexError
 
 
-    def set_tile_content(self, position: tuple[(int, int)], content: str):
+    def set_tile_content(self, tile: tuple[(int, int)], content: str):
         """
         Helper function for coordinate-like indexing
         Sets the string content into the given (x,y) position
+        Raises an `IndexError` if invalid tile
         """
-        if 0 <= position[1] < len(self.game_board) and 0 <= position[0] < len(self.game_board[0]):
-            self.game_board[position[1]][position[0]] = content
+        if 0 <= tile[1] < len(self.game_board) and 0 <= tile[0] < len(self.game_board[0]):
+            self.game_board[tile[1]][tile[0]] = content
         else:
-            print(f"Cannot set content at {position} "
+            print(f"Cannot set content at {tile} "
                   "is outside of game board")
             raise IndexError
 
@@ -111,7 +109,6 @@ class Game:
         as explored
         """
 
-        # If starting position has a mine, TODO EXPLODE!!!!!
         if self.get_tile_content(tile) == 'x':
             self.explored_tiles.append(tile)
             self.set_tile_content(tile, 'X')
@@ -125,39 +122,44 @@ class Game:
         to_explore: list[tuple[(int, int)]] = [tile]
 
         while len(to_explore) > 0:
-            # Get position and removes the last element of the list
+            # Get position and remove the last element of the list
             (tile_x, tile_y) = to_explore.pop()
 
             # Mark tile as explored
             self.explored_tiles.append((tile_x, tile_y))
 
-            # Add surroundings into to_explore if unexplored
             surrounding_tiles: list[tuple[(int, int)]] = []
-            add_to_fill = True
+            no_surrounding_mines = True
+
+            # Add surroundings into to_explore if unexplored
             for dir_x, dir_y in directions:
                 new_x, new_y = tile_x + dir_x, tile_y + dir_y
                 # Check if new tile is inside
-                if 0 <= new_x and new_x < self.board_x_size and 0 <= new_y and new_y < self.board_y_size:
-                    # Check if a neighbor is a mine
-                    if self.get_tile_content((new_x, new_y)) == 'x':
-                        add_to_fill = False
-                        break
-                    # Check if the neighbor hasn't been explored
-                    if (new_x, new_y) not in self.explored_tiles:
-                        surrounding_tiles.append((new_x, new_y))
-            if add_to_fill:
+                if 0 <= new_x and new_x < self.board_x_size:
+                    if 0 <= new_y and new_y < self.board_y_size:
+                        # Check if a neighbor is a mine
+                        if self.get_tile_content((new_x, new_y)) == 'x':
+                            no_surrounding_mines = False
+                            break
+                        # Check if the neighbor hasn't been explored
+                        if (new_x, new_y) not in self.explored_tiles:
+                            surrounding_tiles.append((new_x, new_y))
+
+            if no_surrounding_mines:
                 to_explore.extend(surrounding_tiles)
 
 
     def count_surroundings(self, tile: tuple[(int, int)]) -> int:
         """
-        Counts the amount of mines around the given tile
+        Returns the amount of mines around the given tile.
+        If the given tile is outside of the board, returns 0
         """
         tile_x_pos, tile_y_pos = tile
 
         # Check if the given tile is within boundaries
-        if not (0 <= tile_x_pos and tile_x_pos < self.board_x_size and 0 <= tile_y_pos and tile_y_pos < self.board_y_size):
-            return 0
+        if not (0 <= tile_y_pos and tile_y_pos < self.board_y_size):
+            if not (0 <= tile_x_pos and tile_x_pos < self.board_x_size):
+                return 0
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
                       ( 0, -1),          ( 0, 1),
@@ -296,6 +298,7 @@ def main(sweeper_game: Game):
     sweeperlib.set_mouse_handler(sweeper_game.handle_mouse)
     sweeperlib.start()
 
+
 if __name__ == "__main__":
     game_x_size = prompt_input("Give game size X: ", "Not a valid size")
     game_y_size = prompt_input("Give game size Y: ", "Not a valid size")
@@ -303,5 +306,5 @@ if __name__ == "__main__":
 
     game = Game(game_x_size, game_y_size)
     game.set_board_size(game.board_x_size*TILE_SPRITE_SIZE_PX, game.board_y_size*TILE_SPRITE_SIZE_PX)
-    game.init_field_contents(n_mines=user_n_mines)
+    game.set_tile_contents(n_mines=user_n_mines)
     main(game)
