@@ -25,6 +25,11 @@ statement checks whether the shift key is down:
 
 if modifiers & sweeperlib.MOD_SHIFT:
     # somethinghappens
+
+Minor changes made for packaged implementation includes:
+- `prepare_sprites` not using `.lower()`
+- additional sprites added in `load_sprites`
+- misc changes TODO diff with original
 """
 
 import pyglet
@@ -82,14 +87,14 @@ def load_sprites(path):
 
     pyglet.resource.path = [path]
     images = {}
-    images["0"] = pyglet.resource.image("tile_empty.png")
+    images['0'] = pyglet.resource.image("tile_empty.png")
     for i in range(1, 9):
         images[str(i)] = pyglet.resource.image("tile_{}.png".format(i))
-    images["x"] = pyglet.resource.image("tile_mine.png")
-    images[" "] = pyglet.resource.image("tile_back.png")
-    images["f"] = pyglet.resource.image("tile_flag.png")
-    images["X"] = pyglet.resource.image("tile_mine_explode.png")
-    images["F"] = pyglet.resource.image("tile_mine_incorrect.png")
+    images['x'] = pyglet.resource.image("tile_mine.png")
+    images[' '] = pyglet.resource.image("tile_back.png")
+    images['f'] = pyglet.resource.image("tile_flag.png")
+    images['X'] = pyglet.resource.image("tile_mine_explode.png")
+    images['F'] = pyglet.resource.image("tile_mine_incorrect.png")
     graphics["images"] = images
 
 def create_window(width=800, height=600, bg_color=(240, 240, 240, 255)):
@@ -391,7 +396,7 @@ def prepare_sprite(key, x, y):
     """
 
     graphics["sprites"].append(pyglet.sprite.Sprite(
-        graphics["images"][str(key).lower()],
+        graphics["images"][str(key)],
         x,
         y,
         batch=graphics["batch"]

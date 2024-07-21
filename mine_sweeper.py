@@ -1,24 +1,29 @@
 import random
-from math import floor
 import sweeperlib
+from math import floor
 
-TILE_SPRITE_SIZE = 64
+# Constant size for sprite size in pixels
+TILE_SPRITE_SIZE_PX = 64
 
 class Game:
     """
-    Main handlers for interaction with the game's tiles
+    Main sweeper-game object with state and
+    methods for interacting with game state
     """
 
+    # TODO win condition
+    game_over: bool = False
+
     game_board: list[list[str]]
+
     board_x_size: int
     board_y_size: int
 
-    # (x,y, is_explored)
     explored_tiles: list[tuple[(int,int)]] = []
-
     flagged_tiles: list[tuple[(int, int)]] = []
 
     board_size_px: tuple[(int, int)]
+
 
     def __init__(self, grid_x_max = 0, grid_y_max = 0):
         """
@@ -33,6 +38,7 @@ class Game:
             for _ in range(grid_x_max):
                 row.append(' ')
             self.game_board.append(row)
+
 
     def init_field_contents(self, n_mines: int):
         """
@@ -65,6 +71,7 @@ class Game:
                     surrounding_mines_n = self.count_surroundings((x_index, y_index))
                     self.set_tile_content((x_index, y_index), str(surrounding_mines_n))
 
+
     def get_tile_content(self, position: tuple[(int, int)]) -> str:
         """
         Helper function for coordinate-like indexing
@@ -78,6 +85,7 @@ class Game:
             print(f"No tile content. Position {position} was outside of board")
             raise IndexError
 
+
     def set_tile_content(self, position: tuple[(int, int)], content: str):
         """
         Helper function for coordinate-like indexing
@@ -90,18 +98,24 @@ class Game:
                   "is outside of game board")
             raise IndexError
 
+
     def set_board_size(self, width: int, height: int):
         self.board_size_px = (width, height)
 
+
     def guess_tile(self, tile: tuple[(int, int)]) -> None:
         """
-        TODO
+        Updates the game board according to floodfill logic by
+        adding visited tiles into the `explored_fields` attribute
+        if the clicked tile is a mine, only the mine is marked
+        as explored
         """
 
         # If starting position has a mine, TODO EXPLODE!!!!!
         if self.get_tile_content(tile) == 'x':
             self.explored_tiles.append(tile)
             self.set_tile_content(tile, 'X')
+            self.game_over = True
             return
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
@@ -113,8 +127,6 @@ class Game:
         while len(to_explore) > 0:
             # Get position and removes the last element of the list
             (tile_x, tile_y) = to_explore.pop()
-
-            print(f"Exploring {(tile_x, tile_y)}")
 
             # Mark tile as explored
             self.explored_tiles.append((tile_x, tile_y))
@@ -135,6 +147,7 @@ class Game:
                         surrounding_tiles.append((new_x, new_y))
             if add_to_fill:
                 to_explore.extend(surrounding_tiles)
+
 
     def count_surroundings(self, tile: tuple[(int, int)]) -> int:
         """
@@ -169,28 +182,41 @@ class Game:
                 draw_key = " "
                 if (x_index, y_index) in self.explored_tiles:
                     draw_key = tile_content
-                elif (x_index, y_index) in self.flagged_tiles:
+
+                if (x_index, y_index) in self.flagged_tiles:
                     draw_key = 'f'
+                    if self.game_over and tile_content != 'x':
+                        draw_key = 'F'
+
+                if self.game_over and tile_content == 'x':
+                    draw_key = 'x'
+                    if (x_index, y_index) in self.flagged_tiles:
+                        draw_key = 'f'
+
                 sweeperlib.prepare_sprite(
                             draw_key,
-                            x_index * TILE_SPRITE_SIZE,
-                            y_index * TILE_SPRITE_SIZE)
+                            x_index * TILE_SPRITE_SIZE_PX,
+                            y_index * TILE_SPRITE_SIZE_PX)
         sweeperlib.draw_sprites()
 
+
     def get_tile_index_at_coordinates(self, x_pos: int, y_pos: int) -> tuple[(int, int)]:
-        x_index: int = floor(x_pos / TILE_SPRITE_SIZE)
-        y_index: int = floor(y_pos / TILE_SPRITE_SIZE)
-        print(f"Approx coords: {(x_index, y_index)}")
+        x_index: int = floor(x_pos / TILE_SPRITE_SIZE_PX)
+        y_index: int = floor(y_pos / TILE_SPRITE_SIZE_PX)
         return (x_index, y_index)
 
+
     def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, mod: int):
-        # Check if click was within the board
-        max_board_x, max_board_y = self.board_size_px
-        if x_pos <= 0 or x_pos > max_board_x or y_pos <= 0 or y_pos > max_board_y:
-            print("Click was outside of game board")
+        if self.game_over:
+            # Exits the program
+            sweeperlib.close()
             return
 
-        print(f"Clicked at {(x_pos, y_pos)}")
+        # Check if click was within the board
+        max_board_x, max_board_y = self.board_size_px
+
+        if x_pos <= 0 or x_pos > max_board_x or y_pos <= 0 or y_pos > max_board_y:
+            return
 
         # Get the approximate clicked tile
         selected_tile: tuple[(int, int)] = self.get_tile_index_at_coordinates(x_pos, y_pos)
@@ -199,11 +225,13 @@ class Game:
         match m_button:
             case sweeperlib.MOUSE_LEFT:
                 self.guess_tile(selected_tile)
+
             case sweeperlib.MOUSE_RIGHT:
                 if selected_tile not in self.flagged_tiles:
                     self.flagged_tiles.append(selected_tile)
                 else:
                     self.flagged_tiles.remove(selected_tile)
+
 
     def print_board(self) -> None:
         """
@@ -216,6 +244,7 @@ class Game:
                 row.append(self.get_tile_content((x_index, y_index)))
             print("|", " ".join(row), "|")
         print(" ", "- " * self.board_x_size)
+
 
 def prompt_input(message: str, err_message: str) -> int:
     """
@@ -235,6 +264,7 @@ def prompt_input(message: str, err_message: str) -> int:
             return user_int
         except ValueError:
             print(err_message)
+
 
 def prompt_difficulty(game_size: tuple[(int, int)]) -> int:
     """
@@ -258,24 +288,20 @@ def prompt_difficulty(game_size: tuple[(int, int)]) -> int:
                 print("Not a valid difficulty")
     return round((game_size[0] + game_size[1]) * mine_multiplier)
 
-def main():
-    game_x_size = prompt_input("Give game size X: ", "Not a valid size")
-    game_y_size = prompt_input("Give game size Y: ", "Not a valid size")
-    user_n_mines = prompt_difficulty((game_x_size, game_y_size))
-    game = Game(game_x_size, game_y_size)
-    game.set_board_size(game.board_x_size*TILE_SPRITE_SIZE, game.board_y_size*TILE_SPRITE_SIZE)
-    game.init_field_contents(n_mines=user_n_mines)
-    game.print_board()
+
+def main(sweeper_game: Game):
     sweeperlib.load_sprites("sprites")
-    # Window size and board size exist independently
-    print("Sprites loaded")
-    sweeperlib.create_window(*game.board_size_px)
-    print("Window created")
-    sweeperlib.set_draw_handler(game.draw_field)
-    print("Draw handler set")
-    sweeperlib.set_mouse_handler(game.handle_mouse)
-    print("Mouse handler set")
+    sweeperlib.create_window(*sweeper_game.board_size_px)
+    sweeperlib.set_draw_handler(sweeper_game.draw_field)
+    sweeperlib.set_mouse_handler(sweeper_game.handle_mouse)
     sweeperlib.start()
 
 if __name__ == "__main__":
-    main()
+    game_x_size = prompt_input("Give game size X: ", "Not a valid size")
+    game_y_size = prompt_input("Give game size Y: ", "Not a valid size")
+    user_n_mines = prompt_difficulty((game_x_size, game_y_size))
+
+    game = Game(game_x_size, game_y_size)
+    game.set_board_size(game.board_x_size*TILE_SPRITE_SIZE_PX, game.board_y_size*TILE_SPRITE_SIZE_PX)
+    game.init_field_contents(n_mines=user_n_mines)
+    main(game)
