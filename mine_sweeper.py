@@ -16,6 +16,8 @@ class Game:
     # (x,y, is_explored)
     explored_tiles: list[tuple[(int,int)]] = []
 
+    flagged_tiles: list[tuple[(int, int)]] = []
+
     board_size_px: tuple[(int, int)]
 
     def __init__(self, grid_x_max = 0, grid_y_max = 0):
@@ -99,6 +101,7 @@ class Game:
         # If starting position has a mine, TODO EXPLODE!!!!!
         if self.get_tile_content(tile) == 'x':
             self.explored_tiles.append(tile)
+            self.set_tile_content(tile, 'X')
             return
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
@@ -155,7 +158,6 @@ class Game:
                 if 0 <= new_y and new_y < self.board_y_size:
                     if self.get_tile_content((new_x, new_y)) == 'x':
                         count += 1
-        
         return count
 
 
@@ -167,6 +169,8 @@ class Game:
                 draw_key = " "
                 if (x_index, y_index) in self.explored_tiles:
                     draw_key = tile_content
+                elif (x_index, y_index) in self.flagged_tiles:
+                    draw_key = 'f'
                 sweeperlib.prepare_sprite(
                             draw_key,
                             x_index * TILE_SPRITE_SIZE,
@@ -196,7 +200,10 @@ class Game:
             case sweeperlib.MOUSE_LEFT:
                 self.guess_tile(selected_tile)
             case sweeperlib.MOUSE_RIGHT:
-                pass
+                if selected_tile not in self.flagged_tiles:
+                    self.flagged_tiles.append(selected_tile)
+                else:
+                    self.flagged_tiles.remove(selected_tile)
 
     def print_board(self) -> None:
         """
