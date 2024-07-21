@@ -2,17 +2,17 @@ import random
 import sweeperlib
 from math import floor
 
-# Constant size for sprite size in pixels
-TILE_SPRITE_SIZE_PX = 64
-
 class Game:
     """
     Main sweeper-game object with state and
     methods for interacting with game state
     """
+    # Constant size for sprite size in pixels
+    TILE_SPRITE_SIZE_PX = 64
 
     # TODO win condition
     game_over: bool = False
+    win: bool = False
 
     game_board: list[list[str]]
 
@@ -25,31 +25,49 @@ class Game:
     board_size_px: tuple[(int, int)]
 
 
-    def __init__(self, grid_x_max = 0, grid_y_max = 0):
+    def __init__(self, board_size: tuple[(int, int)]):
         """
-        Initializes the `game_board` with blank tiles
+        Initializes the `game_board` with blank tiles at the specified
+        board size
+
+        :params tuple[(int, int)] board_size: (x,y) represented board maximum size
         """
-        self.board_x_size = grid_x_max
-        self.board_y_size = grid_y_max
+        self.board_x_size, self.board_y_size = board_size
+
+        if self.board_x_size < 2 or self.board_y_size < 2:
+            print("Invalid board size. minimum size is 2x2")
+            print("Using 2x2")
+            self.board_x_size = 2
+            self.board_y_size = 2
+
+        # Initialize board
         self.game_board = []
-        for _ in range(grid_y_max):
+        for _ in range(self.board_y_size):
             row: list[str] = []
-            for _ in range(grid_x_max):
+            for _ in range(self.board_x_size):
                 row.append(' ')
             self.game_board.append(row)
 
+        # Set the board size in px
+        # used in capturing clicked tile
+        self.board_size_px = (self.board_x_size * self.TILE_SPRITE_SIZE_PX,
+                              self.board_y_size * self.TILE_SPRITE_SIZE_PX)
 
-    def set_tile_contents(self, n_mines: int):
+
+    def init_tile_contents(self, n_mines: int):
         """
         Places `n_mines` amount of mines randomly on the `game_board`
+
+        :params int n_mines: number of mines to be placed
         """
         if n_mines <= 0:
-            print("Not enough mines provided")
-            return
+            print("Minimum mine count is 1")
+            print("Using mine count 1")
+            n_mines = 1
 
-        max_mines = self.board_x_size * self.board_y_size
+        max_mines = self.board_x_size * self.board_y_size - 1
         if n_mines > max_mines:
-            print(f"Too many mines! Using maximun amount ({max_mines}) mines.")
+            print(f"Too many mines! Using maximum amount ({max_mines}) mines.")
             n_mines = max_mines
 
         allocated_mines: list[tuple[(int, int)]] = []
@@ -75,6 +93,8 @@ class Game:
         Returns the contents of the tile given in (x,y) format
         as a string
         Raises an `IndexError` if invalid tile
+
+        :params tuple[(int, int)] tile: tile that content is stored in
         """
         if 0 <= tile[1] < len(self.game_board) and 0 <= tile[0] < len(self.game_board[0]):
             return self.game_board[tile[1]][tile[0]]
@@ -88,6 +108,9 @@ class Game:
         Helper function for coordinate-like indexing
         Sets the string content into the given (x,y) position
         Raises an `IndexError` if invalid tile
+
+        :params tuple[(int, int)] tile: tile that content is stored in
+        :params str content: string content to be stored in tile
         """
         if 0 <= tile[1] < len(self.game_board) and 0 <= tile[0] < len(self.game_board[0]):
             self.game_board[tile[1]][tile[0]] = content
@@ -97,20 +120,20 @@ class Game:
             raise IndexError
 
 
-    def set_board_size(self, width: int, height: int):
-        self.board_size_px = (width, height)
-
-
     def guess_tile(self, tile: tuple[(int, int)]) -> None:
         """
         Updates the game board according to floodfill logic by
         adding visited tiles into the `explored_fields` attribute
         if the clicked tile is a mine, only the mine is marked
         as explored
+
+        :params tuple[(int, int)] tile: starting tile for guess algorithm
         """
 
+        # If tile is a bomb
         if self.get_tile_content(tile) == 'x':
             self.explored_tiles.append(tile)
+            # 'X' is the exploded marker for a tile
             self.set_tile_content(tile, 'X')
             self.game_over = True
             return
@@ -153,6 +176,8 @@ class Game:
         """
         Returns the amount of mines around the given tile.
         If the given tile is outside of the board, returns 0
+
+        :params tuple[(int, int)] tile: tile (x,y) index-coordinates of the target tile
         """
         tile_x_pos, tile_y_pos = tile
 
@@ -177,6 +202,11 @@ class Game:
 
 
     def draw_field(self):
+        """
+        Main-game draw field handler for the pyglet program.
+        Draws sprites based on the `game_board` string contents
+        of each tile with additional draw logic
+        """
         sweeperlib.clear_window()
         sweeperlib.begin_sprite_draw()
         for y_index, row in enumerate(self.game_board):
@@ -197,18 +227,34 @@ class Game:
 
                 sweeperlib.prepare_sprite(
                             draw_key,
-                            x_index * TILE_SPRITE_SIZE_PX,
-                            y_index * TILE_SPRITE_SIZE_PX)
+                            x_index * self.TILE_SPRITE_SIZE_PX,
+                            y_index * self.TILE_SPRITE_SIZE_PX)
         sweeperlib.draw_sprites()
 
 
-    def get_tile_index_at_coordinates(self, x_pos: int, y_pos: int) -> tuple[(int, int)]:
-        x_index: int = floor(x_pos / TILE_SPRITE_SIZE_PX)
-        y_index: int = floor(y_pos / TILE_SPRITE_SIZE_PX)
+    def get_tile_index_at_coordinates(self, position: tuple[(int, int)]) -> tuple[(int, int)]:
+        """
+        Approximates which tile the user clicked
+
+        Returns the approximated (x,y) index-coordinates of game tiles
+        used in game logic
+
+        :params tuple[(int, int)] position: Mouse coordinates of the clicked window position
+        """
+        x_index: int = floor(position[0] / self.TILE_SPRITE_SIZE_PX)
+        y_index: int = floor(position[1] / self.TILE_SPRITE_SIZE_PX)
         return (x_index, y_index)
 
 
     def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, mod: int):
+        """
+        Pyglet mouse handler for interacting with game UI
+
+        :params int x_pos: Mouse x-position on the window
+        :params int y_pos: Mouse y-position on the window
+        :params int m_button: Pyglet mouse button with which the window was clicked
+        :params int mod: Binary representation of applied keyboard modifiers (not used)
+        """
         if self.game_over:
             # Exits the program
             sweeperlib.close()
@@ -221,7 +267,7 @@ class Game:
             return
 
         # Get the approximate clicked tile
-        selected_tile: tuple[(int, int)] = self.get_tile_index_at_coordinates(x_pos, y_pos)
+        selected_tile: tuple[(int, int)] = self.get_tile_index_at_coordinates((x_pos, y_pos))
 
         # Match the mouse button with an action
         match m_button:
@@ -237,7 +283,8 @@ class Game:
 
     def print_board(self) -> None:
         """
-        Prints the board given grid to stdout
+        Prints the `game_board` to stdout.
+        Used in development
         """
         print(" ", "- " * self.board_x_size)
         for y_index in range(self.board_y_size - 1, -1, -1):
@@ -246,65 +293,3 @@ class Game:
                 row.append(self.get_tile_content((x_index, y_index)))
             print("|", " ".join(row), "|")
         print(" ", "- " * self.board_x_size)
-
-
-def prompt_input(message: str, err_message: str) -> int:
-    """
-    Prompts the user for an integer using the prompt parameter.
-    If an invalid input is given, an error message is shown using
-    the error message parameter. A valid input is returned as an
-    integer.
-    """
-    user_input: str = ""
-    user_int: int = 0
-    while True:
-        user_input = input(message)
-        try:
-            user_int = int(user_input)
-            if user_int > 100:
-                raise ValueError
-            return user_int
-        except ValueError:
-            print(err_message)
-
-
-def prompt_difficulty(game_size: tuple[(int, int)]) -> int:
-    """
-    Prompts for game difficulty, returns the amount of mines for the game
-    """
-    user_input: str = ""
-    mine_multiplier: float = 0.0
-    while True:
-        user_input = input("Select game difficulty (easy, medium, hard): ")
-        match user_input:
-            case "easy":
-                mine_multiplier = 0.6
-                break
-            case "medium":
-                mine_multiplier = 1.0
-                break
-            case "hard":
-                mine_multiplier = 1.4
-                break
-            case _:
-                print("Not a valid difficulty")
-    return round((game_size[0] + game_size[1]) * mine_multiplier)
-
-
-def main(sweeper_game: Game):
-    sweeperlib.load_sprites("sprites")
-    sweeperlib.create_window(*sweeper_game.board_size_px)
-    sweeperlib.set_draw_handler(sweeper_game.draw_field)
-    sweeperlib.set_mouse_handler(sweeper_game.handle_mouse)
-    sweeperlib.start()
-
-
-if __name__ == "__main__":
-    game_x_size = prompt_input("Give game size X: ", "Not a valid size")
-    game_y_size = prompt_input("Give game size Y: ", "Not a valid size")
-    user_n_mines = prompt_difficulty((game_x_size, game_y_size))
-
-    game = Game(game_x_size, game_y_size)
-    game.set_board_size(game.board_x_size*TILE_SPRITE_SIZE_PX, game.board_y_size*TILE_SPRITE_SIZE_PX)
-    game.set_tile_contents(n_mines=user_n_mines)
-    main(game)
