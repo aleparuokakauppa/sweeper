@@ -18,8 +18,10 @@ class Game:
 
     board_x_size: int
     board_y_size: int
+    n_mines: int
 
     explored_tiles: list[tuple[(int,int)]] = []
+
     flagged_tiles: list[tuple[(int, int)]] = []
 
     board_size_px: tuple[(int, int)]
@@ -60,6 +62,8 @@ class Game:
 
         :params int n_mines: number of mines to be placed
         """
+        self.n_mines = n_mines
+
         if n_mines <= 0:
             print("Minimum mine count is 1")
             print("Using mine count 1")
@@ -148,8 +152,9 @@ class Game:
             # Get position and remove the last element of the list
             (tile_x, tile_y) = to_explore.pop()
 
-            # Mark tile as explored
-            self.explored_tiles.append((tile_x, tile_y))
+            # Mark tile as explored and revealed
+            if (tile_x, tile_y) not in self.explored_tiles:
+                self.explored_tiles.append((tile_x, tile_y))
 
             surrounding_tiles: list[tuple[(int, int)]] = []
             no_surrounding_mines = True
@@ -257,6 +262,7 @@ class Game:
         """
         if self.game_over:
             # Exits the program
+            print("You lost!")
             sweeperlib.close()
             return
 
@@ -273,6 +279,7 @@ class Game:
         match m_button:
             case sweeperlib.MOUSE_LEFT:
                 self.guess_tile(selected_tile)
+                self.update_win()
 
             case sweeperlib.MOUSE_RIGHT:
                 if selected_tile not in self.flagged_tiles:
@@ -293,3 +300,12 @@ class Game:
                 row.append(self.get_tile_content((x_index, y_index)))
             print("|", " ".join(row), "|")
         print(" ", "- " * self.board_x_size)
+
+
+    def update_win(self):
+        print(f"n_explored_tiles: {len(self.explored_tiles)}")
+        print(f"board_size: {self.board_x_size * self.board_y_size}")
+        win = len(self.explored_tiles) == self.board_x_size * self.board_y_size - self.n_mines
+        if win:
+            sweeperlib.close()
+            print("You win!")
