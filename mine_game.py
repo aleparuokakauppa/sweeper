@@ -1,7 +1,6 @@
 import random
 import sweeperlib
 from math import floor
-from time import sleep
 
 class Game:
     """
@@ -10,6 +9,7 @@ class Game:
     """
     # Constant size for sprite size in pixels
     TILE_SPRITE_SIZE_PX = 64
+    FACE_SPRITE_SIZE_PX = 96
 
     # TODO win condition
     game_over: bool = False
@@ -19,6 +19,7 @@ class Game:
 
     board_x_size: int
     board_y_size: int
+
     n_mines: int
 
     explored_tiles: list[tuple[(int,int)]] = []
@@ -27,6 +28,7 @@ class Game:
 
     board_size_px: tuple[(int, int)]
 
+    remaining_time: int = 999
 
     def __init__(self, board_size: tuple[(int, int)]):
         """
@@ -216,7 +218,10 @@ class Game:
         of each tile with additional draw logic
         """
         sweeperlib.clear_window()
+        sweeperlib.draw_background()
         sweeperlib.begin_sprite_draw()
+
+        # Prepare tile sprites
         for y_index, row in enumerate(self.game_board):
             for x_index, tile_content in enumerate(row):
                 draw_key = " "
@@ -237,8 +242,55 @@ class Game:
                             draw_key,
                             x_index * self.TILE_SPRITE_SIZE_PX,
                             y_index * self.TILE_SPRITE_SIZE_PX)
+
+        # Prepare sprites for timer
+        timer_str = f"{self.remaining_time:03}"
+        for pos, timer_char in enumerate(timer_str):
+            sweeperlib.prepare_sprite(
+                    f"display-{timer_char}",
+                    (self.board_size_px[0] - 3 * self.TILE_SPRITE_SIZE_PX) + pos * self.TILE_SPRITE_SIZE_PX,
+                    self.board_size_px[1] + 12
+                    )
+
+        # Prepare sprites for mine counter
+        n_mines_left: int = self.n_mines - len(self.flagged_tiles)
+        n_mines_left_str: str = f"{n_mines_left:03}"
+        for pos, n_mines_left_char in enumerate(n_mines_left_str):
+            sweeperlib.prepare_sprite(
+                    f"display-{n_mines_left_char}",
+                    pos * self.TILE_SPRITE_SIZE_PX,
+                    self.board_size_px[1] + 12
+                    )
+
+        # Prepare sprite for status face
+        face_draw_key = "face-smiley"
+        if self.game_over:
+            face_draw_key = "face-lose"
+        if self.win:
+            face_draw_key = "face-win"
+        sweeperlib.prepare_sprite(
+                face_draw_key,
+                round(self.board_size_px[0]/2) - self.FACE_SPRITE_SIZE_PX/2,
+                self.board_size_px[1] + 12
+                )
+
         sweeperlib.draw_sprites()
 
+
+    def draw_timer(self, _):
+        """
+        Draws the timer sprites onto the game window and updates timer
+        in game logic. Updates `game_over` if timer reaches zero.
+
+        Used by `sweeperlib.set_interval_handler`
+        """
+        # Decrement time with 0 min
+        if self.remaining_time > 0 and not self.game_over and not self.win:
+            self.remaining_time -= 1
+
+        # Set game_over
+        if self.remaining_time <= 0:
+            self.game_over = True
 
     def get_tile_index_at_coordinates(self, position: tuple[(int, int)]) -> tuple[(int, int)]:
         """

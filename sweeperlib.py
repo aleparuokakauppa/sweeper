@@ -77,8 +77,6 @@ def load_sprites(path):
     0 to 8 correspond to opened tiles, x to mines, f to flags, and space to 
     unopened tiles.
     
-    The size of the default sprites is 40x40 pixels.
-
     Path should be given as relative, from where your code files are (see
     example at the end of this module).
     
@@ -87,14 +85,28 @@ def load_sprites(path):
 
     pyglet.resource.path = [path]
     images = {}
-    images['0'] = pyglet.resource.image("tile_empty.png")
+
+    # Load tile sprites
+    images['0'] = pyglet.resource.image("tiles/tile_empty.png")
     for i in range(1, 9):
-        images[str(i)] = pyglet.resource.image("tile_{}.png".format(i))
-    images['x'] = pyglet.resource.image("tile_mine.png")
-    images[' '] = pyglet.resource.image("tile_back.png")
-    images['f'] = pyglet.resource.image("tile_flag.png")
-    images['X'] = pyglet.resource.image("tile_mine_explode.png")
-    images['F'] = pyglet.resource.image("tile_mine_incorrect.png")
+        images[str(i)] = pyglet.resource.image("tiles/tile_{}.png".format(i))
+    images['x'] = pyglet.resource.image("tiles/tile_mine.png")
+    images[' '] = pyglet.resource.image("tiles/tile_back.png")
+    images['f'] = pyglet.resource.image("tiles/tile_flag.png")
+    images['X'] = pyglet.resource.image("tiles/tile_mine_explode.png")
+    images['F'] = pyglet.resource.image("tiles/tile_mine_incorrect.png")
+
+    # Load face sprites
+    images["face-smiley"] = pyglet.resource.image("faces/face-smiley.png")
+    images["face-lose"] = pyglet.resource.image("faces/face-lose.png")
+    images["face-win"] = pyglet.resource.image("faces/face-win.png")
+
+    # Load display sprites
+    for i in range(0, 10):
+        images[f"display-{i}"] = pyglet.resource.image(f"display/display-{i}.png")
+    images["display-empty"] = pyglet.resource.image("display/display-empty.png")
+    images["display--"] = pyglet.resource.image("display/display-line.png")
+
     graphics["images"] = images
 
 def create_window(width=800, height=600, bg_color=(240, 240, 240, 255)):
@@ -298,7 +310,7 @@ def set_interval_handler(handler, interval=1/60):
     The interval's default value translates to 60 FPS.
 
     :param function handler: handler to call periodically
-    :param float toistovali: interval between calls, default 1/60
+    :param float interval: interval between calls, default 1/60
     """
 
     pyglet.clock.schedule_interval(handler, interval)

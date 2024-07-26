@@ -47,28 +47,24 @@ def prompt_difficulty(game_size: tuple[(int, int)]) -> int:
 def init_game():
     game_x_size = prompt_input("Give game size X: ", "Not a valid size")
     game_y_size = prompt_input("Give game size Y: ", "Not a valid size")
-    user_n_mines = prompt_difficulty((game_x_size, game_y_size))
+    #user_n_mines = prompt_difficulty((game_x_size, game_y_size))
+    user_n_mines = prompt_input("How many mines?: ", "Not a valid number")
+    
 
     game = Game((game_x_size, game_y_size))
     game.init_tile_contents(n_mines=user_n_mines)
 
 
     sweeperlib.load_sprites("sprites")
-    sweeperlib.create_window(*game.board_size_px)
+    sweeperlib.create_window(game.board_size_px[0], game.board_size_px[1]+128, (192, 192, 192, 255))
 
     # Set handlers
     sweeperlib.set_draw_handler(game.draw_field)
     sweeperlib.set_mouse_handler(game.handle_mouse)
+    sweeperlib.set_interval_handler(game.draw_timer, 1)
 
     # Start the main-game
     sweeperlib.start()
 
-def main_menu() -> str:
-    """
-    Main menu 
-    """
-    return ""
-
 if __name__ == "__main__":
-    main_menu()
     init_game()
