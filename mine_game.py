@@ -1,6 +1,7 @@
 import random
 import sweeperlib
 from math import floor
+from time import sleep
 
 class Game:
     """
@@ -75,7 +76,7 @@ class Game:
             n_mines = max_mines
 
         allocated_mines: list[tuple[(int, int)]] = []
-        while len(allocated_mines) <= n_mines:
+        while len(allocated_mines) < n_mines:
             rand_y = random.randint(0, self.board_y_size - 1)
             rand_x = random.randint(0, self.board_x_size - 1)
             if (rand_x, rand_y) not in allocated_mines:
@@ -176,6 +177,8 @@ class Game:
             if no_surrounding_mines:
                 to_explore.extend(surrounding_tiles)
 
+        self.update_win()
+
 
     def count_surroundings(self, tile: tuple[(int, int)]) -> int:
         """
@@ -260,12 +263,6 @@ class Game:
         :params int m_button: Pyglet mouse button with which the window was clicked
         :params int mod: Binary representation of applied keyboard modifiers (not used)
         """
-        if self.game_over:
-            # Exits the program
-            print("You lost!")
-            sweeperlib.close()
-            return
-
         # Check if click was within the board
         max_board_x, max_board_y = self.board_size_px
 
@@ -276,16 +273,23 @@ class Game:
         selected_tile: tuple[(int, int)] = self.get_tile_index_at_coordinates((x_pos, y_pos))
 
         # Match the mouse button with an action
-        match m_button:
-            case sweeperlib.MOUSE_LEFT:
-                self.guess_tile(selected_tile)
-                self.update_win()
+        if not self.win and not self.game_over:
+            match m_button:
+                case sweeperlib.MOUSE_LEFT:
+                    self.guess_tile(selected_tile)
 
-            case sweeperlib.MOUSE_RIGHT:
-                if selected_tile not in self.flagged_tiles:
-                    self.flagged_tiles.append(selected_tile)
-                else:
-                    self.flagged_tiles.remove(selected_tile)
+                case sweeperlib.MOUSE_RIGHT:
+                    if selected_tile not in self.flagged_tiles:
+                        if selected_tile not in self.explored_tiles:
+                            self.flagged_tiles.append(selected_tile)
+                    else:
+                        self.flagged_tiles.remove(selected_tile)
+        else:
+            if self.win:
+                print("You win!")
+            else:
+                print("You lost!")
+            sweeperlib.close()
 
 
     def print_board(self) -> None:
@@ -303,9 +307,4 @@ class Game:
 
 
     def update_win(self):
-        print(f"n_explored_tiles: {len(self.explored_tiles)}")
-        print(f"board_size: {self.board_x_size * self.board_y_size}")
-        win = len(self.explored_tiles) == self.board_x_size * self.board_y_size - self.n_mines
-        if win:
-            sweeperlib.close()
-            print("You win!")
+        self.win = len(self.explored_tiles) == self.board_x_size * self.board_y_size - self.n_mines
