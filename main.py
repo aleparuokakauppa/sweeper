@@ -1,5 +1,6 @@
 import sweeperlib
 from mine_game import Game
+from scoreboard_logging import ScoreboardLogger
 
 def prompt_input(message: str, err_message: str) -> int:
     """
@@ -47,7 +48,6 @@ def prompt_difficulty(game_size: tuple[(int, int)]) -> int:
 def init_game():
     game_x_size = prompt_input("Give game size X: ", "Not a valid size")
     game_y_size = prompt_input("Give game size Y: ", "Not a valid size")
-    #user_n_mines = prompt_difficulty((game_x_size, game_y_size))
     user_n_mines = prompt_input("How many mines?: ", "Not a valid number")
     
 
@@ -67,4 +67,9 @@ def init_game():
     sweeperlib.start()
 
 if __name__ == "__main__":
+    dt = ScoreboardLogger()
+    dt.write_scoreboard_data(15, "Easy", "Alepa")
+    #data = dt.get_scoreboard_data()
+    #for value in data:
+        #print(value)
     init_game()
