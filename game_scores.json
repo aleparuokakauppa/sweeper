@@ -1,11 +1,1 @@
-{
-    "time_spent": 15,
-    "difficulty": "Easy",
-    "player_name": "Alepa",
-    "date_time": "2024-07-27 18:45:52.938533"
-}{
-    "time_spent": 15,
-    "difficulty": "Easy",
-    "player_name": "Alepa",
-    "date_time": "2024-07-27 18:46:05.781053"
-}
+[{"player_name": "alepa", "difficulty": 4, "time_spent": 1, "date_time": "21:21 2024/07/29", "game_size_x": 8, "game_size_y": 8}]

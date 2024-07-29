@@ -1,5 +1,6 @@
 import random
 import sweeperlib
+from scoreboard_logging import ScoreboardLogger
 from math import floor
 
 class Game:
@@ -10,25 +11,33 @@ class Game:
     # Constant size for sprite size in pixels
     TILE_SPRITE_SIZE_PX = 64
     FACE_SPRITE_SIZE_PX = 96
+    STARTING_TIME = 999
 
-    # TODO win condition
+    # Defined in `constants.py`
+    # Used in logging
+    difficulty: int
+    n_mines: int
+
+    player_name: str
+
     game_over: bool = False
     win: bool = False
 
+    # Game board that logic is applied to
     game_board: list[list[str]]
 
-    board_x_size: int
-    board_y_size: int
+    # Board size in (x,y) format
+    board_size: tuple[int, int]
 
-    n_mines: int
+    # Board size in pixels according to window
+    board_size_px: tuple[int, int]
 
-    explored_tiles: list[tuple[(int,int)]] = []
+    explored_tiles: list[tuple[int,int]] = []
+    flagged_tiles: list[tuple[int, int]] = []
 
-    flagged_tiles: list[tuple[(int, int)]] = []
+    remaining_time: int = STARTING_TIME
 
-    board_size_px: tuple[(int, int)]
-
-    remaining_time: int = 999
+    score_logger = ScoreboardLogger()
 
     def __init__(self, board_size: tuple[(int, int)]):
         """
@@ -37,26 +46,25 @@ class Game:
 
         :params tuple[(int, int)] board_size: (x,y) represented board maximum size
         """
-        self.board_x_size, self.board_y_size = board_size
+        self.board_size = board_size
 
-        if self.board_x_size < 2 or self.board_y_size < 2:
-            print("Invalid board size. minimum size is 2x2")
-            print("Using 2x2")
-            self.board_x_size = 2
-            self.board_y_size = 2
+        if self.board_size[0] < 8 or self.board_size[1] < 8:
+            print("Invalid board size. minimum size is 8x8")
+            print("Using 8x8")
+            self.board_size = (8, 8)
 
         # Initialize board
         self.game_board = []
-        for _ in range(self.board_y_size):
+        for _ in range(self.board_size[1]):
             row: list[str] = []
-            for _ in range(self.board_x_size):
+            for _ in range(self.board_size[0]):
                 row.append(' ')
             self.game_board.append(row)
 
         # Set the board size in px
         # used in capturing clicked tile
-        self.board_size_px = (self.board_x_size * self.TILE_SPRITE_SIZE_PX,
-                              self.board_y_size * self.TILE_SPRITE_SIZE_PX)
+        self.board_size_px = (self.board_size[0] * self.TILE_SPRITE_SIZE_PX,
+                              self.board_size[1] * self.TILE_SPRITE_SIZE_PX)
 
 
     def init_tile_contents(self, n_mines: int):
@@ -72,23 +80,23 @@ class Game:
             print("Using mine count 1")
             n_mines = 1
 
-        max_mines = self.board_x_size * self.board_y_size - 1
+        max_mines = self.board_size[0] * self.board_size[1] - 1
         if n_mines > max_mines:
             print(f"Too many mines! Using maximum amount ({max_mines}) mines.")
             n_mines = max_mines
 
         allocated_mines: list[tuple[(int, int)]] = []
         while len(allocated_mines) < n_mines:
-            rand_y = random.randint(0, self.board_y_size - 1)
-            rand_x = random.randint(0, self.board_x_size - 1)
+            rand_y = random.randint(0, self.board_size[1] - 1)
+            rand_x = random.randint(0, self.board_size[0] - 1)
             if (rand_x, rand_y) not in allocated_mines:
                 self.set_tile_content((rand_x, rand_y), 'x')
                 allocated_mines.append((rand_x, rand_y))
 
         # Sets the tile contents for each `game_tile` according to
         # the amount of surrounding mines each has
-        for y_index in range(self.board_y_size):
-            for x_index in range(self.board_x_size):
+        for y_index in range(self.board_size[1]):
+            for x_index in range(self.board_size[0]):
                 if self.get_tile_content((x_index, y_index)) != 'x':
                     surrounding_mines_n = self.count_surroundings((x_index, y_index))
                     self.set_tile_content((x_index, y_index), str(surrounding_mines_n))
@@ -166,8 +174,8 @@ class Game:
             for dir_x, dir_y in directions:
                 new_x, new_y = tile_x + dir_x, tile_y + dir_y
                 # Check if new tile is inside
-                if 0 <= new_x and new_x < self.board_x_size:
-                    if 0 <= new_y and new_y < self.board_y_size:
+                if 0 <= new_x and new_x < self.board_size[0]:
+                    if 0 <= new_y and new_y < self.board_size[1]:
                         # Check if a neighbor is a mine
                         if self.get_tile_content((new_x, new_y)) == 'x':
                             no_surrounding_mines = False
@@ -192,8 +200,8 @@ class Game:
         tile_x_pos, tile_y_pos = tile
 
         # Check if the given tile is within boundaries
-        if not (0 <= tile_y_pos and tile_y_pos < self.board_y_size):
-            if not (0 <= tile_x_pos and tile_x_pos < self.board_x_size):
+        if not (0 <= tile_y_pos and tile_y_pos < self.board_size[1]):
+            if not (0 <= tile_x_pos and tile_x_pos < self.board_size[0]):
                 return 0
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
@@ -204,8 +212,8 @@ class Game:
         for dir_x, dir_y in directions:
             new_x, new_y = tile_x_pos + dir_x, tile_y_pos + dir_y
             # Check if tile is inside
-            if 0 <= new_x and new_x < self.board_x_size:
-                if 0 <= new_y and new_y < self.board_y_size:
+            if 0 <= new_x and new_x < self.board_size[0]:
+                if 0 <= new_y and new_y < self.board_size[1]:
                     if self.get_tile_content((new_x, new_y)) == 'x':
                         count += 1
         return count
@@ -344,19 +352,16 @@ class Game:
             sweeperlib.close()
 
 
-    def print_board(self) -> None:
-        """
-        Prints the `game_board` to stdout.
-        Used in development
-        """
-        print(" ", "- " * self.board_x_size)
-        for y_index in range(self.board_y_size - 1, -1, -1):
-            row = []
-            for x_index in range(self.board_x_size):
-                row.append(self.get_tile_content((x_index, y_index)))
-            print("|", " ".join(row), "|")
-        print(" ", "- " * self.board_x_size)
-
-
     def update_win(self):
-        self.win = len(self.explored_tiles) == self.board_x_size * self.board_y_size - self.n_mines
+        self.win = len(self.explored_tiles) == self.board_size[0] * self.board_size[1] - self.n_mines
+        if self.win:
+            self.score_logger.write_scoreboard_data(self.player_name,
+                                                    self.difficulty,
+                                                    self.STARTING_TIME - self.remaining_time,
+                                                    self.board_size[0],
+                                                    self.board_size[1])
+
+    def print_scores(self):
+        # TODO group by difficulty and sort by time spent
+        for record in self.score_logger.get_scoreboard_data():
+            print(f"{record["player_name"]}: {record["difficulty"]} {record["game_size_x"], record["game_size_y"]} -> {record["time_spent"]} @ {record["date_time"]}")
