@@ -19,11 +19,12 @@ This implementation uses the timer as a countdown, rather than a time counter
     ```bash
     pip install pyglet
     ```
-- Start game
+- Start the game
     ```bash
     python main.py
     ```
 
+
 # External dependencies:
-    - `pyglet`
-    - included `sweeperlib.py` library
+- `pyglet`
+- included `sweeperlib.py` library
