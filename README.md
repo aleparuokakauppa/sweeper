@@ -17,6 +17,8 @@ This implementation uses the timer as a countdown, rather than a time counter
 The main problem with the game is that it doesn't give a pleasant initial starting position.
 One might lose on the first click.
 
+The program was tested on Arch Linux and MacOS-Sonoma
+
 # Usage
 - Install dependencies 
     ```bash
@@ -26,7 +28,6 @@ One might lose on the first click.
     ```bash
     python main.py
     ```
-
 
 # External dependencies:
 - `pyglet`
