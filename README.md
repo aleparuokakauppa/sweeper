@@ -28,3 +28,6 @@ This implementation uses the timer as a countdown, rather than a time counter
 # External dependencies:
 - `pyglet`
 - included `sweeperlib.py` library
+
+# Screenshot
+![Screenshot](https://raw.githubusercontent.com/aleparuokakauppa/sweeper/master/images/mine_sweeper_screenshot.jpg?raw=true)
