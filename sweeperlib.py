@@ -111,7 +111,7 @@ def load_sprites(path):
 
     graphics["images"] = images
 
-def create_window(width=800, height=600, bg_color=(240, 240, 240, 255)):
+def create_window(width=800, height=600, bg_color=(240, 240, 240, 255), title="sweeperlib"):
     """
     Creates a game window for displaying graphics. This function needs to be
     called before any other functions in this module can be used. By default
@@ -132,6 +132,7 @@ def create_window(width=800, height=600, bg_color=(240, 240, 240, 255)):
         )
         graphics["window"].set_visible(False)
         graphics["window"].on_close = close
+        graphics["window"].set_caption(title)
     else:
         resize_window(width, height)
 

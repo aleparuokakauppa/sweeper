@@ -16,7 +16,7 @@ def init_game():
     game.print_scores()
 
     sweeperlib.load_sprites("sprites")
-    sweeperlib.create_window(game.board_size_px[0], game.board_size_px[1]+128, (192, 192, 192, 255))
+    sweeperlib.create_window(game.board_size_px[0], game.board_size_px[1]+128, (192, 192, 192, 255), title="Mine Sweeper")
 
     # Set pyglet handlers
     sweeperlib.set_draw_handler(game.draw_field)
