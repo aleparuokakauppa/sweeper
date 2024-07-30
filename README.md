@@ -14,6 +14,9 @@ The program uses a single JSON file for a database for simplicity
 
 This implementation uses the timer as a countdown, rather than a time counter
 
+The main problem with the game is that it doesn't give a pleasant initial starting position.
+One might lose on the first click.
+
 # Usage
 - Install dependencies 
     ```bash
