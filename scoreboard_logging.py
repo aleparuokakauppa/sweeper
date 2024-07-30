@@ -47,9 +47,20 @@ class ScoreboardLogger:
 
         dt = datetime.datetime.now()
 
+        difficulty_str = ""
+        match difficulty:
+            case constants.DIFFICULTY_EASY:
+                difficulty_str = "Easy"
+            case constants.DIFFICULTY_MEDIUM:
+                difficulty_str = "Medium"
+            case constants.DIFFICULTY_HARD:
+                difficulty_str = "Hard"
+            case constants.DIFFICULTY_CUSTOM:
+                difficulty_str = "Custom"
+
         score_data = {
             "player_name": player_name,
-            "difficulty": difficulty,
+            "difficulty": difficulty_str,
             "time_spent": time_spent,
             "date_time": dt.strftime("%H:%M %Y/%m/%d"),
             "game_size_x": game_size_x,

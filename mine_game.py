@@ -364,4 +364,4 @@ class Game:
     def print_scores(self):
         # TODO group by difficulty and sort by time spent
         for record in self.score_logger.get_scoreboard_data():
-            print(f"{record["player_name"]}: {record["difficulty"]} {record["game_size_x"], record["game_size_y"]} -> {record["time_spent"]} @ {record["date_time"]}")
+            print(f"{record["player_name"]}: {record["difficulty"]} {record["game_size_x"]}x{record["game_size_y"]} -> {record["time_spent"]}s @ {record["date_time"]}")
