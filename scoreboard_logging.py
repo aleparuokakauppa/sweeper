@@ -6,7 +6,7 @@ class ScoreboardLogger:
     """
     Reader and writer for scoreboard logging of the minesweeper game
 
-    Uses a JSON file as a db, because of simplicity
+    Uses a JSON file as a db for simplicity
     """
     DB_FILENAME = "game_scores.json"
 

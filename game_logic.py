@@ -1,5 +1,6 @@
 import random
 import sweeperlib
+import constants
 from scoreboard_logging import ScoreboardLogger
 from math import floor
 
@@ -8,17 +9,9 @@ class Game:
     Main sweeper-game object with state and
     methods for interacting with game state
     """
-    # Constant size for sprite size in pixels
-    TILE_SPRITE_SIZE_PX = 64
-    FACE_SPRITE_SIZE_PX = 96
-    STARTING_TIME = 999
-
-    # Defined in `constants.py`
-    # Used in logging
     difficulty: int
-    n_mines: int
-
     player_name: str
+    n_mines: int
 
     game_over: bool = False
     win: bool = False
@@ -26,16 +19,17 @@ class Game:
     # Game board that logic is applied to
     game_board: list[list[str]]
 
-    # Board size in (x,y) format
+    # Board size in (x-size,y-size) format
     board_size: tuple[int, int]
 
     # Board size in pixels according to window
     board_size_px: tuple[int, int]
 
+    # Keeps track of revealed tiles to the player
     explored_tiles: list[tuple[int,int]] = []
     flagged_tiles: list[tuple[int, int]] = []
 
-    remaining_time: int = STARTING_TIME
+    remaining_time: int = constants.STARTING_TIME
 
     score_logger = ScoreboardLogger()
 
@@ -63,9 +57,8 @@ class Game:
 
         # Set the board size in px
         # used in capturing clicked tile
-        self.board_size_px = (self.board_size[0] * self.TILE_SPRITE_SIZE_PX,
-                              self.board_size[1] * self.TILE_SPRITE_SIZE_PX)
-
+        self.board_size_px = (self.board_size[0] * constants.TILE_SPRITE_SIZE_PX,
+                              self.board_size[1] * constants.TILE_SPRITE_SIZE_PX)
 
     def init_tile_contents(self, n_mines: int):
         """
@@ -101,7 +94,6 @@ class Game:
                     surrounding_mines_n = self.count_surroundings((x_index, y_index))
                     self.set_tile_content((x_index, y_index), str(surrounding_mines_n))
 
-
     def get_tile_content(self, tile: tuple[(int, int)]) -> str:
         """
         Helper function for coordinate-like indexing
@@ -116,7 +108,6 @@ class Game:
         else:
             print(f"No tile content. Position {tile} was outside of board")
             raise IndexError
-
 
     def set_tile_content(self, tile: tuple[(int, int)], content: str):
         """
@@ -133,7 +124,6 @@ class Game:
             print(f"Cannot set content at {tile} "
                   "is outside of game board")
             raise IndexError
-
 
     def guess_tile(self, tile: tuple[(int, int)]) -> None:
         """
@@ -186,9 +176,7 @@ class Game:
 
             if no_surrounding_mines:
                 to_explore.extend(surrounding_tiles)
-
         self.update_win()
-
 
     def count_surroundings(self, tile: tuple[(int, int)]) -> int:
         """
@@ -217,7 +205,6 @@ class Game:
                     if self.get_tile_content((new_x, new_y)) == 'x':
                         count += 1
         return count
-
 
     def draw_field(self):
         """
@@ -248,15 +235,15 @@ class Game:
 
                 sweeperlib.prepare_sprite(
                             draw_key,
-                            x_index * self.TILE_SPRITE_SIZE_PX,
-                            y_index * self.TILE_SPRITE_SIZE_PX)
+                            x_index * constants.TILE_SPRITE_SIZE_PX,
+                            y_index * constants.TILE_SPRITE_SIZE_PX)
 
         # Prepare sprites for timer
         timer_str = f"{self.remaining_time:03}"
         for pos, timer_char in enumerate(timer_str):
             sweeperlib.prepare_sprite(
                     f"display-{timer_char}",
-                    (self.board_size_px[0] - 3 * self.TILE_SPRITE_SIZE_PX) + pos * self.TILE_SPRITE_SIZE_PX,
+                    (self.board_size_px[0] - 3 * constants.TILE_SPRITE_SIZE_PX) + pos * constants.TILE_SPRITE_SIZE_PX,
                     self.board_size_px[1] + 12
                     )
 
@@ -266,7 +253,7 @@ class Game:
         for pos, n_mines_left_char in enumerate(n_mines_left_str):
             sweeperlib.prepare_sprite(
                     f"display-{n_mines_left_char}",
-                    pos * self.TILE_SPRITE_SIZE_PX,
+                    pos * constants.TILE_SPRITE_SIZE_PX,
                     self.board_size_px[1] + 12
                     )
 
@@ -278,10 +265,9 @@ class Game:
             face_draw_key = "face-win"
         sweeperlib.prepare_sprite(
                 face_draw_key,
-                round(self.board_size_px[0]/2) - self.FACE_SPRITE_SIZE_PX/2,
+                round(self.board_size_px[0]/2) - constants.FACE_SPRITE_SIZE_PX/2,
                 self.board_size_px[1] + 12
                 )
-
         sweeperlib.draw_sprites()
 
 
@@ -309,10 +295,9 @@ class Game:
 
         :params tuple[(int, int)] position: Mouse coordinates of the clicked window position
         """
-        x_index: int = floor(position[0] / self.TILE_SPRITE_SIZE_PX)
-        y_index: int = floor(position[1] / self.TILE_SPRITE_SIZE_PX)
+        x_index: int = floor(position[0] / constants.TILE_SPRITE_SIZE_PX)
+        y_index: int = floor(position[1] / constants.TILE_SPRITE_SIZE_PX)
         return (x_index, y_index)
-
 
     def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, mod: int):
         """
@@ -351,13 +336,12 @@ class Game:
                 print("You lost!")
             sweeperlib.close()
 
-
     def update_win(self):
         self.win = len(self.explored_tiles) == self.board_size[0] * self.board_size[1] - self.n_mines
         if self.win:
             self.score_logger.write_scoreboard_data(self.player_name,
                                                     self.difficulty,
-                                                    self.STARTING_TIME - self.remaining_time,
+                                                    constants.STARTING_TIME - self.remaining_time,
                                                     self.board_size[0],
                                                     self.board_size[1])
 
@@ -372,7 +356,8 @@ class Game:
                             record["date_time"]))
         records = sorted(records, key=lambda record: record[4])
 
-        print("\n--    Scoreboard    --")
-        for record in records:
-            print(f"{record[0]}: {record[1]}  {record[2]}x{record[3]}  {record[4]}s  @ {record[5]}")
-        print('\n')
+        if len(records) != 0:
+            print("\n--    Scoreboard    --")
+            for record in records:
+                print(f"{record[0]}: {record[1]}  {record[2]}x{record[3]}  {record[4]}s  @ {record[5]}")
+            print('\n')
