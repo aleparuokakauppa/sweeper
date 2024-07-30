@@ -1,7 +1,7 @@
 ## Mine sweeper game made with pyglet and sweeperlib helper library
 Simple mine sweeper implementation for Elementary Programming class
 
-The program keeps track of a scoreboard of previous games and their details
+The program keeps track of previous games and their details with a scoreboard that is printed when the game is started
 
 The game starts with an initial CLI for game initialization and scoreboard logging
 
