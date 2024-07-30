@@ -225,7 +225,7 @@ class Game:
 
                 if (x_index, y_index) in self.flagged_tiles:
                     draw_key = 'f'
-                    if self.game_over and tile_content != 'x':
+                    if (self.game_over or self.win) and tile_content != 'x':
                         draw_key = 'F'
 
                 if self.game_over and tile_content == 'x':

@@ -24,6 +24,7 @@ def init_game():
     sweeperlib.set_interval_handler(game.draw_timer, 1)
 
     sweeperlib.start()
+    print("flag")
 
 if __name__ == "__main__":
     try:
