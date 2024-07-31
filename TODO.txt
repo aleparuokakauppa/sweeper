@@ -1,3 +1,0 @@
-Creating a menu loop
-
-The program creates a new playing field for the player with new parameters

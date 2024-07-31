@@ -91,7 +91,7 @@ def load_sprites(path):
     # Load tile sprites
     images['0'] = pyglet.resource.image("tiles/tile_empty.png")
     for i in range(1, 9):
-        images[str(i)] = pyglet.resource.image("tiles/tile_{}.png".format(i))
+        images[str(i)] = pyglet.resource.image(f"tiles/tile_{i}.png")
     images['x'] = pyglet.resource.image("tiles/tile_mine.png")
     images[' '] = pyglet.resource.image("tiles/tile_back.png")
     images['f'] = pyglet.resource.image("tiles/tile_flag.png")
@@ -212,7 +212,7 @@ def set_drag_handler(handler):
         graphics["window"].on_mouse_drag = handler
     else:
         print("Window hasn't been created!")
-    
+
 def set_release_handler(handler):
     """
     Sets a function that is used when a mouse button is released. Typically
@@ -236,13 +236,12 @@ def set_release_handler(handler):
 
     :param function handler: handler function for mouse release
     """
-    
+
     if graphics["window"]:
         graphics["window"].on_mouse_release = handler
     else:
         print("Window hasn't been created!")
-    
-    
+
 def set_keyboard_handler(handler):
     """
     Sets a function that is for handling keyboard input. You won't need this
@@ -355,33 +354,6 @@ def draw_background():
     """
 
     graphics["background"].draw()
-
-def draw_text(text, x, y, color=(0, 0, 0, 255), font="serif", size=32):
-    """
-    Draws text on the screen. Can be used if you want to write something to
-    the game window (e.g. counters or instructions). Default font is serif,
-    size 32, color black. These can be altered by providing the function its
-    optional arguments. The x and y coordinates define the bottom left corner
-    of the text.
-    
-    Text, if any, should be drawn last.
-    
-    :param str text: string to display
-    :param int x: bottom left x coordinate for the text
-    :param int y: bottom left y coordinate for the text
-    :param tuple color: color value, a tuple of four integers (RGBA)
-    :param str font: name of the font family
-    :param int size: fontin size as points
-    """
-
-    text_box = pyglet.text.Label(text,
-        font_name=font,
-        font_size=size,
-        color=color,
-        x=x, y=y,
-        anchor_x="left", anchor_y="bottom"
-    )
-    text_box.draw()
 
 def begin_sprite_draw():
     """

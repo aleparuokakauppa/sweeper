@@ -1,8 +1,16 @@
+"""
+Main game logic object for:
+- Drawing on the pyglet screen
+- Checking clicks
+- Updating sprites to match game state
+- Game logic
+"""
+
 import random
+from math import floor
 import sweeperlib
 import constants
 from scoreboard_logging import ScoreboardLogger
-from math import floor
 
 class Game:
     """
@@ -13,9 +21,6 @@ class Game:
     player_name: str
     n_mines: int
 
-    game_over: bool = False
-    win: bool = False
-
     # Game board that logic is applied to
     game_board: list[list[str]]
 
@@ -25,8 +30,13 @@ class Game:
     # Board size in pixels according to window
     board_size_px: tuple[int, int]
 
+    # Set game properties
+    game_over: bool = False
+    win: bool = False
+    game_board: list[list[str]] = []
+
     # Keeps track of revealed tiles to the player
-    explored_tiles: list[tuple[int,int]] = []
+    explored_tiles: list[tuple[int, int]] = []
     flagged_tiles: list[tuple[int, int]] = []
 
     remaining_time: int = constants.STARTING_TIME
@@ -40,14 +50,7 @@ class Game:
 
         :params tuple[(int, int)] board_size: (x,y) represented board maximum size
         """
-        # Reset game properties
-        self.game_over = False
-        self.win = False
-        self.game_board = []
-        self.explored_tiles = []
-        self.flagged_tiles = []
-        self.remaining_time = constants.STARTING_TIME
-        self.board_size = board_size
+        self.board_size: tuple[int, int] = board_size
 
         if self.board_size[0] < 8 or self.board_size[1] < 8:
             print("Invalid board size. minimum size is 8x8")
@@ -112,9 +115,8 @@ class Game:
         """
         if 0 <= tile[1] < len(self.game_board) and 0 <= tile[0] < len(self.game_board[0]):
             return self.game_board[tile[1]][tile[0]]
-        else:
-            print(f"No tile content. Position {tile} was outside of board")
-            raise IndexError
+        print(f"No tile content. Position {tile} was outside of board")
+        raise IndexError
 
     def set_tile_content(self, tile: tuple[(int, int)], content: str):
         """
@@ -171,8 +173,8 @@ class Game:
             for dir_x, dir_y in directions:
                 new_x, new_y = tile_x + dir_x, tile_y + dir_y
                 # Check if new tile is inside
-                if 0 <= new_x and new_x < self.board_size[0]:
-                    if 0 <= new_y and new_y < self.board_size[1]:
+                if 0 <= new_x < self.board_size[0]:
+                    if 0 <= new_y < self.board_size[1]:
                         # Check if a neighbor is a mine
                         if self.get_tile_content((new_x, new_y)) == 'x':
                             no_surrounding_mines = False
@@ -195,20 +197,20 @@ class Game:
         tile_x_pos, tile_y_pos = tile
 
         # Check if the given tile is within boundaries
-        if not (0 <= tile_y_pos and tile_y_pos < self.board_size[1]):
-            if not (0 <= tile_x_pos and tile_x_pos < self.board_size[0]):
+        if not 0 <= tile_y_pos < self.board_size[1]:
+            if not 0 <= tile_x_pos < self.board_size[0]:
                 return 0
 
         directions = [(-1, -1), (-1, 0), (-1, 1),
                       ( 0, -1),          ( 0, 1),
                       ( 1, -1), ( 1, 0), ( 1, 1)]
-        
+
         count = 0
         for dir_x, dir_y in directions:
             new_x, new_y = tile_x_pos + dir_x, tile_y_pos + dir_y
             # Check if tile is inside
-            if 0 <= new_x and new_x < self.board_size[0]:
-                if 0 <= new_y and new_y < self.board_size[1]:
+            if 0 <= new_x < self.board_size[0]:
+                if 0 <= new_y < self.board_size[1]:
                     if self.get_tile_content((new_x, new_y)) == 'x':
                         count += 1
         return count
@@ -250,9 +252,9 @@ class Game:
         for pos, timer_char in enumerate(timer_str):
             sweeperlib.prepare_sprite(
                     f"display-{timer_char}",
-                    (self.board_size_px[0] - 3 * constants.TILE_SPRITE_SIZE_PX) + pos * constants.TILE_SPRITE_SIZE_PX,
-                    self.board_size_px[1] + 12
-                    )
+                    (self.board_size_px[0] - 3 * constants.TILE_SPRITE_SIZE_PX)
+                    + pos * constants.TILE_SPRITE_SIZE_PX,
+                    self.board_size_px[1] + 12)
 
         # Prepare sprites for mine counter
         n_mines_left: int = self.n_mines - len(self.flagged_tiles)
@@ -261,8 +263,7 @@ class Game:
             sweeperlib.prepare_sprite(
                     f"display-{n_mines_left_char}",
                     pos * constants.TILE_SPRITE_SIZE_PX,
-                    self.board_size_px[1] + 12
-                    )
+                    self.board_size_px[1] + 12)
 
         # Prepare sprite for status face
         face_draw_key = "face-smiley"
@@ -306,7 +307,7 @@ class Game:
         y_index: int = floor(position[1] / constants.TILE_SPRITE_SIZE_PX)
         return (x_index, y_index)
 
-    def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, mod: int):
+    def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, _: int):
         """
         Pyglet mouse handler for interacting with game UI
 
@@ -315,6 +316,14 @@ class Game:
         :params int m_button: Pyglet mouse button with which the window was clicked
         :params int mod: Binary representation of applied keyboard modifiers (not used)
         """
+        if self.win or self.game_over:
+            if self.win:
+                print("\nYou win!\n")
+            else:
+                print("\nYou lost!\n")
+            sweeperlib.close()
+            return
+
         # Check if click was within the board
         max_board_x, max_board_y = self.board_size_px
 
@@ -325,29 +334,31 @@ class Game:
         selected_tile: tuple[(int, int)] = self.get_tile_index_at_coordinates((x_pos, y_pos))
 
         # Match the mouse button with an action
-        if not self.win and not self.game_over:
-            match m_button:
-                case sweeperlib.MOUSE_LEFT:
-                    self.guess_tile(selected_tile)
+        match m_button:
+            case sweeperlib.MOUSE_LEFT:
+                self.guess_tile(selected_tile)
 
-                case sweeperlib.MOUSE_RIGHT:
-                    if selected_tile not in self.flagged_tiles:
-                        if selected_tile not in self.explored_tiles:
-                            self.flagged_tiles.append(selected_tile)
-                    else:
-                        self.flagged_tiles.remove(selected_tile)
-        else:
-            if self.win:
-                print("You win!")
-            else:
-                print("You lost!")
-            sweeperlib.close()
+            case sweeperlib.MOUSE_RIGHT:
+                if selected_tile not in self.flagged_tiles:
+                    if selected_tile not in self.explored_tiles:
+                        self.flagged_tiles.append(selected_tile)
+                else:
+                    self.flagged_tiles.remove(selected_tile)
 
     def update_win(self):
-        self.win = len(self.explored_tiles) == self.board_size[0] * self.board_size[1] - self.n_mines
+        """
+        Updates the objects `win` attribute according to
+        the amount of explored tiles
+        """
+        target_explored_tile_count = self.board_size[0] * self.board_size[1] - self.n_mines
+        self.win = len(self.explored_tiles) == target_explored_tile_count
+
+        # Only add score if the player won
+        # Can be changed to include losses, but this makes more sense
         if self.win:
-            self.score_logger.write_scoreboard_data(self.player_name,
-                                                    self.difficulty,
-                                                    constants.STARTING_TIME - self.remaining_time,
-                                                    self.board_size[0],
-                                                    self.board_size[1])
+            self.score_logger.write_scoreboard_data(
+                self.player_name,
+                self.difficulty,
+                constants.STARTING_TIME - self.remaining_time,
+                (self.board_size[0],
+                self.board_size[1]))

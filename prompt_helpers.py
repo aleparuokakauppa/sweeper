@@ -1,3 +1,7 @@
+"""
+Helper functions for getting valid user inputs
+"""
+
 import constants
 from game_logic import Game
 
@@ -29,9 +33,15 @@ def prompt_difficulty(game_instance: Game) -> int:
     Can raise a KeyboardInterrupt
     """
     mine_multiplier: float = 0.0
-    difficulty_input_message = "Select game difficulty\n Easy -> e\n Medium -> m\n Hard -> h\n Custom -> c\n> "
     while True:
-        match input(difficulty_input_message).lower():
+        print()
+        print("-- Select game difficulty --")
+        print("Easy -> e")
+        print("Medium -> m")
+        print("Hard -> h")
+        print("Custom -> c")
+
+        match input("> ").lower():
             case "e":
                 mine_multiplier = 0.5
                 game_instance.difficulty = constants.DIFFICULTY_EASY
@@ -50,4 +60,3 @@ def prompt_difficulty(game_instance: Game) -> int:
             case _:
                 print("Not a valid difficulty")
     return round((game_instance.board_size[0] + game_instance.board_size[1]) * mine_multiplier)
-
