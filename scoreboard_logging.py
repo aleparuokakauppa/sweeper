@@ -71,3 +71,22 @@ class ScoreboardLogger:
 
         with open(self.DB_FILENAME, 'w') as db_file:
             json.dump(existing_data, db_file)
+
+    def print_scores(self):
+        records: list[tuple] = []
+        for record in self.get_scoreboard_data():
+            records.append((record["player_name"],
+                            record["difficulty"],
+                            record["game_size_x"],
+                            record["game_size_y"],
+                            record["time_spent"],
+                            record["date_time"]))
+        records = sorted(records, key=lambda record: record[4])
+
+        if len(records) != 0:
+            print("\n--    Scoreboard    --")
+            for record in records:
+                print(f"{record[0]}: {record[1]}  {record[2]}x{record[3]}  {record[4]}s  @ {record[5]}")
+            print('\n')
+        else:
+            print("No previous scores")

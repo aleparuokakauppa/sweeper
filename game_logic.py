@@ -40,6 +40,13 @@ class Game:
 
         :params tuple[(int, int)] board_size: (x,y) represented board maximum size
         """
+        # Reset game properties
+        self.game_over = False
+        self.win = False
+        self.game_board = []
+        self.explored_tiles = []
+        self.flagged_tiles = []
+        self.remaining_time = constants.STARTING_TIME
         self.board_size = board_size
 
         if self.board_size[0] < 8 or self.board_size[1] < 8:
@@ -344,20 +351,3 @@ class Game:
                                                     constants.STARTING_TIME - self.remaining_time,
                                                     self.board_size[0],
                                                     self.board_size[1])
-
-    def print_scores(self):
-        records: list[tuple] = []
-        for record in self.score_logger.get_scoreboard_data():
-            records.append((record["player_name"],
-                            record["difficulty"],
-                            record["game_size_x"],
-                            record["game_size_y"],
-                            record["time_spent"],
-                            record["date_time"]))
-        records = sorted(records, key=lambda record: record[4])
-
-        if len(records) != 0:
-            print("\n--    Scoreboard    --")
-            for record in records:
-                print(f"{record[0]}: {record[1]}  {record[2]}x{record[3]}  {record[4]}s  @ {record[5]}")
-            print('\n')
