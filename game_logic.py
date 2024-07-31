@@ -5,7 +5,6 @@ Main game logic object for:
 - Updating sprites to match game state
 - Game logic
 """
-
 import random
 from math import floor
 import sweeperlib

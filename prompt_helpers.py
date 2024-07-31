@@ -1,7 +1,6 @@
 """
 Helper functions for getting valid user inputs
 """
-
 import constants
 from game_logic import Game
 
