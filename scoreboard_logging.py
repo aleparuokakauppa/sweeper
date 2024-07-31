@@ -96,4 +96,4 @@ class ScoreboardLogger:
                       f"{record[4]}s  @ {record[5]}")
             print('\n')
         else:
-            print("No previous scores")
+            print("\nNo previous scores\n")
