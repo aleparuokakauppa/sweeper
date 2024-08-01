@@ -81,7 +81,6 @@ def print_scores():
         records.append(record)
         records = sorted(records, key=lambda record: record["to_reveal"])
 
-
     if len(records) != 0:
         print("\n--    Scoreboard    --")
         for record in records:

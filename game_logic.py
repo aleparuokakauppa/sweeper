@@ -80,16 +80,6 @@ class Game:
         """
         self.n_mines = n_mines
 
-        if n_mines <= 0:
-            print("Minimum mine count is 1")
-            print("Using mine count 1")
-            n_mines = 1
-
-        max_mines = self.board_size[0] * self.board_size[1] - 1
-        if n_mines > max_mines:
-            print(f"Too many mines! Using maximum amount ({max_mines}) mines.")
-            n_mines = max_mines
-
         allocated_mines: list[tuple[(int, int)]] = []
         while len(allocated_mines) < n_mines:
             rand_y = random.randint(0, self.board_size[1] - 1)
@@ -111,6 +101,7 @@ class Game:
         Helper function for coordinate-like indexing
         Returns the contents of the tile given in (x,y) format
         as a string
+
         Raises an `IndexError` if invalid tile
 
         :params tuple[(int, int)] tile: tile that content is stored in
@@ -124,6 +115,7 @@ class Game:
         """
         Helper function for coordinate-like indexing
         Sets the string content into the given (x,y) position
+
         Raises an `IndexError` if invalid tile
 
         :params tuple[(int, int)] tile: tile that content is stored in
@@ -146,7 +138,6 @@ class Game:
         :params tuple[(int, int)] tile: starting tile for guess algorithm
         """
 
-        # If tile is a bomb
         if self.get_tile_content(tile) == 'x':
             self.explored_tiles.append(tile)
             # 'X' is the exploded marker for a tile
@@ -159,7 +150,6 @@ class Game:
                       ( 1, -1), ( 1, 0), ( 1, 1)]
 
         to_explore: list[tuple[(int, int)]] = [tile]
-
         while len(to_explore) > 0:
             # Get position and remove the last element of the list
             (tile_x, tile_y) = to_explore.pop()
@@ -169,6 +159,7 @@ class Game:
                 self.explored_tiles.append((tile_x, tile_y))
 
             surrounding_tiles: list[tuple[(int, int)]] = []
+
             no_surrounding_mines = True
 
             # Add surroundings into to_explore if unexplored
@@ -184,9 +175,9 @@ class Game:
                         # Check if the neighbor hasn't been explored
                         if (new_x, new_y) not in self.explored_tiles:
                             surrounding_tiles.append((new_x, new_y))
-
             if no_surrounding_mines:
                 to_explore.extend(surrounding_tiles)
+
         self.update_win()
 
     def count_surroundings(self, tile: tuple[(int, int)]) -> int:
@@ -316,11 +307,10 @@ class Game:
 
         Used by `sweeperlib.set_interval_handler`
         """
-        # Decrement time with 0 min
-        if self.remaining_time > 0 and not self.game_over and not self.win:
-            self.remaining_time -= 1
+        if self.remaining_time > 0:
+            if not self.game_over and not self.win:
+                self.remaining_time -= 1
 
-        # Set game_over
         if self.remaining_time <= 0:
             self.game_over = True
 
@@ -359,14 +349,14 @@ class Game:
             sweeperlib.close()
             return
 
-        # Check if click was within the board
         max_board_x, max_board_y = self.board_size_px
 
+        # Check if click was within the board
         if x_pos <= 0 or x_pos > max_board_x or y_pos <= 0 or y_pos > max_board_y:
             return
 
         # Get the approximate clicked tile
-        selected_tile: tuple[(int, int)] = self.get_tile_index_at_coordinates((x_pos, y_pos))
+        selected_tile = self.get_tile_index_at_coordinates((x_pos, y_pos))
 
         # Match the mouse button with an action
         match m_button:
@@ -375,11 +365,10 @@ class Game:
                 self.guess_tile(selected_tile)
 
             case sweeperlib.MOUSE_RIGHT:
-                if selected_tile not in self.flagged_tiles:
-                    if selected_tile not in self.explored_tiles:
-                        self.flagged_tiles.append(selected_tile)
-                else:
+                if selected_tile in self.flagged_tiles:
                     self.flagged_tiles.remove(selected_tile)
+                elif selected_tile not in self.explored_tiles:
+                    self.flagged_tiles.append(selected_tile)
 
     def update_win(self):
         """
