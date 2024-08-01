@@ -17,7 +17,7 @@ The main problem with the game is random mine generation.
 Mines are initialized completely randomly and can result in
 boring games. Also the user can fail on the first click.
 
-The program was tested on Arch Linux and MacOS-Sonoma
+Program tested on Arch Linux and MacOS
 
 ## Usage
 - Install dependencies 
