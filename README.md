@@ -1,4 +1,4 @@
-## Mine sweeper game made with pyglet and sweeperlib helper library
+# Mine sweeper game made with pyglet and sweeperlib helper library
 Simple mine sweeper implementation for Elementary Programming class
 
 The program keeps track of previous games and their details with a scoreboard that is printed when the game is started
@@ -19,7 +19,7 @@ boring games. Also the user can fail on the first click.
 
 The program was tested on Arch Linux and MacOS-Sonoma
 
-# Usage
+## Usage
 - Install dependencies 
     ```bash
     pip install pyglet
@@ -29,9 +29,9 @@ The program was tested on Arch Linux and MacOS-Sonoma
     python main.py
     ```
 
-# External dependencies:
+## External dependencies:
 - `pyglet`
 - included `sweeperlib.py` library
 
-# Screenshot
+## Screenshot
 ![Screenshot](https://raw.githubusercontent.com/aleparuokakauppa/sweeper/master/images/mine_sweeper_screenshot.jpg?raw=true)
