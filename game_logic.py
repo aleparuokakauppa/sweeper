@@ -9,7 +9,7 @@ import random
 from math import floor
 import sweeperlib
 import constants
-from scoreboard_logging import ScoreboardLogger
+import scoreboard_logging
 
 class Game:
     """
@@ -39,8 +39,6 @@ class Game:
     flagged_tiles: list[tuple[int, int]] = []
 
     remaining_time: int = constants.STARTING_TIME
-
-    score_logger = ScoreboardLogger()
 
     def __init__(self, board_size: tuple[(int, int)]):
         """
@@ -346,9 +344,18 @@ class Game:
         :params int x_pos: Mouse x-position on the window
         :params int y_pos: Mouse y-position on the window
         :params int m_button: Pyglet mouse button with which the window was clicked
-        :params int mod: Binary representation of applied keyboard modifiers (not used)
         """
         if self.win or self.game_over:
+            target_explored_tile_count = self.board_size[0] * self.board_size[1] - self.n_mines
+
+            scoreboard_logging.write_scoreboard_data(
+                self.player_name,
+                self.difficulty,
+                self.turns_used,
+                constants.STARTING_TIME - self.remaining_time,
+                target_explored_tile_count - len(self.explored_tiles),
+                self.board_size)
+
             sweeperlib.close()
             return
 
@@ -381,14 +388,3 @@ class Game:
         """
         target_explored_tile_count = self.board_size[0] * self.board_size[1] - self.n_mines
         self.win = len(self.explored_tiles) == target_explored_tile_count
-
-        # Only add score if the player won
-        # Can be changed to include losses, but this makes more sense
-        if self.win:
-            self.score_logger.write_scoreboard_data(
-                self.player_name,
-                self.difficulty,
-                self.turns_used,
-                constants.STARTING_TIME - self.remaining_time,
-                target_explored_tile_count - len(self.explored_tiles),
-                self.board_size)

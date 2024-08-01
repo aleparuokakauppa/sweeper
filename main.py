@@ -6,7 +6,7 @@ The user interface and the game is started from here
 import sweeperlib
 import prompt_helpers
 from game_logic import Game
-from scoreboard_logging import ScoreboardLogger
+import scoreboard_logging
 
 def main_menu():
     """
@@ -24,7 +24,7 @@ def main_menu():
             case 'n':
                 start_game()
             case 's':
-                ScoreboardLogger().print_scores()
+                scoreboard_logging.print_scores()
             case 'q':
                 print("Goodbye...")
                 break
