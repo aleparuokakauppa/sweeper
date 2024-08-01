@@ -62,9 +62,9 @@ def start_game():
                              title="Mine Sweeper")
 
     # Set pyglet handlers
-    sweeperlib.set_draw_handler(game_object.draw_field)
     sweeperlib.set_mouse_handler(game_object.handle_mouse)
-    sweeperlib.set_interval_handler(game_object.draw_timer, 1)
+    sweeperlib.set_draw_handler(game_object.sprite_handler.draw_screen)
+    sweeperlib.set_interval_handler(game_object.sprite_handler.update_timer, 1)
 
     sweeperlib.start()
 
