@@ -355,6 +355,33 @@ def draw_background():
 
     graphics["background"].draw()
 
+def draw_text(text, x, y, color=(0, 0, 0, 255), font="serif", size=32):
+    """
+    Draws text on the screen. Can be used if you want to write something to
+    the game window (e.g. counters or instructions). Default font is serif,
+    size 32, color black. These can be altered by providing the function its
+    optional arguments. The x and y coordinates define the bottom left corner
+    of the text.
+    
+    Text, if any, should be drawn last.
+    
+    :param str text: string to display
+    :param int x: bottom left x coordinate for the text
+    :param int y: bottom left y coordinate for the text
+    :param tuple color: color value, a tuple of four integers (RGBA)
+    :param str font: name of the font family
+    :param int size: fontin size as points
+    """
+
+    text_box = pyglet.text.Label(text,
+        font_name=font,
+        font_size=size,
+        color=color,
+        x=x, y=y,
+        anchor_x="left", anchor_y="bottom"
+    )
+    text_box.draw()
+
 def begin_sprite_draw():
     """
     Starts the drawing of sprites (tiles) by initializing a batch where all

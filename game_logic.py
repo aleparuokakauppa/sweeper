@@ -49,6 +49,10 @@ class Game:
 
         :params tuple[(int, int)] board_size: (x,y) represented board maximum size
         """
+        self.game_board = []
+        self.explored_tiles = []
+        self.flagged_tiles = []
+        self.n_mines = 0
         self.board_size: tuple[int, int] = board_size
 
         if self.board_size[0] < 8 or self.board_size[1] < 8:
@@ -277,6 +281,23 @@ class Game:
                 )
         sweeperlib.draw_sprites()
 
+        if self.win:
+            sweeperlib.draw_text(
+                    "You win!",
+                    round(self.board_size_px[0]/3),
+                    round(self.board_size_px[1]/2),
+                    color=(0, 255, 0, 255),
+                    size=64
+                    )
+
+        if self.game_over:
+            sweeperlib.draw_text(
+                    "You lost!",
+                    round(self.board_size_px[0]/3),
+                    round(self.board_size_px[1]/2),
+                    color=(255, 0, 0, 255),
+                    size=64
+                    )
 
     def draw_timer(self, _):
         """
@@ -316,10 +337,6 @@ class Game:
         :params int mod: Binary representation of applied keyboard modifiers (not used)
         """
         if self.win or self.game_over:
-            if self.win:
-                print("\nYou win!\n")
-            else:
-                print("\nYou lost!\n")
             sweeperlib.close()
             return
 
