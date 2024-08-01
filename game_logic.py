@@ -7,12 +7,12 @@ Main game logic object for:
 """
 from math import floor
 import sweeperlib
-import constants
+import game_constants
 import scoreboard_logging
-from game_state import GameState
+from game_state import Game
 from sprite_helper import Sprites
 
-class Game:
+class GameHandler:
     """
     Main sweeper-game object
 
@@ -22,8 +22,8 @@ class Game:
     difficulty: int
     turns_used: int
 
-    game_state: GameState
-    sprite_handler: Sprites
+    game_state: Game
+    sprite_handlers: Sprites
 
     def __init__(self, board_size: tuple[(int, int)], n_mines: int):
         """
@@ -33,8 +33,8 @@ class Game:
 
         :params tuple[(int, int)] board_size: (x,y) format board max size
         """
-        self.game_state = GameState(board_size, n_mines)
-        self.sprite_handler = Sprites(self.game_state)
+        self.game_state = Game(board_size, n_mines)
+        self.sprite_handlers = Sprites(self.game_state)
 
     def get_tile_index_at_coordinates(self, position: tuple[(int, int)]) -> tuple[(int, int)]:
         """
@@ -45,8 +45,8 @@ class Game:
 
         :params tuple[(int, int)] position: Mouse coordinates of the clicked window position
         """
-        x_index: int = floor(position[0] / constants.TILE_SPRITE_SIZE_PX)
-        y_index: int = floor(position[1] / constants.TILE_SPRITE_SIZE_PX)
+        x_index: int = floor(position[0] / game_constants.TILE_SPRITE_SIZE_PX)
+        y_index: int = floor(position[1] / game_constants.TILE_SPRITE_SIZE_PX)
         return (x_index, y_index)
 
     def handle_mouse(self, x_pos: int, y_pos: int, m_button: int, _: int):
@@ -64,7 +64,7 @@ class Game:
                 self.player_name,
                 self.difficulty,
                 self.turns_used,
-                constants.STARTING_TIME - self.game_state.remaining_time,
+                game_constants.STARTING_TIME - self.game_state.remaining_time,
                 target_explored_tile_count - len(self.game_state.explored_tiles),
                 self.game_state.board_size)
 

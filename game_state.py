@@ -1,11 +1,11 @@
 import random
-import constants
+import game_constants
 
 DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1),
               ( 0, -1),          ( 0, 1),
               ( 1, -1), ( 1, 0), ( 1, 1)]
 
-class GameState:
+class Game:
     """
     Class to hold the game's state
 
@@ -25,12 +25,12 @@ class GameState:
         self.flagged_tiles: list[tuple[int, int]] = []
         self.n_mines: int = 0
         self.turns_used: int = 0
-        self.remaining_time: int = constants.STARTING_TIME
+        self.remaining_time: int = game_constants.STARTING_TIME
         self.n_mines: int = n_mines
 
         self.board_size = board_size
-        self.board_size_px = (self.board_size[0] * constants.TILE_SPRITE_SIZE_PX,
-                              self.board_size[1] * constants.TILE_SPRITE_SIZE_PX)
+        self.board_size_px = (self.board_size[0] * game_constants.TILE_SPRITE_SIZE_PX,
+                              self.board_size[1] * game_constants.TILE_SPRITE_SIZE_PX)
 
         # Initialize board
         self.game_board: list[list[str]]  = []

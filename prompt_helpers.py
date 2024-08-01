@@ -2,7 +2,7 @@
 Helper functions for getting valid user inputs
 """
 import constants
-from game_logic import Game
+from game_logic import GameHandler
 
 def prompt_int(message: str, err_message: str, prompt_min: int, prompt_max: int) -> int:
     """
@@ -33,13 +33,12 @@ def prompt_int(message: str, err_message: str, prompt_min: int, prompt_max: int)
             print(err_message)
             print(f"Minimum value: {prompt_min} Maximum value: {prompt_max}")
 
-def prompt_difficulty(game_instance: Game) -> int:
+def prompt_difficulty() -> int:
     """
-    Prompts for game difficulty, returns the amount of mines for the game
+    Prompts for game difficulty, returns difficulty as defined in `constants.py`
 
     Can raise a KeyboardInterrupt
     """
-    mine_multiplier: float = 0.0
     while True:
         print()
         print("-- Select game difficulty --")
@@ -50,24 +49,44 @@ def prompt_difficulty(game_instance: Game) -> int:
 
         match input("> ").lower():
             case "e":
-                mine_multiplier = 0.5
-                game_instance.difficulty = constants.DIFFICULTY_EASY
-                break
+                return constants.DIFFICULTY_EASY
             case "m":
-                mine_multiplier = 1.0
-                game_instance.difficulty = constants.DIFFICULTY_MEDIUM
-                break
+                return constants.DIFFICULTY_MEDIUM
             case "h":
-                mine_multiplier = 1.5
-                game_instance.difficulty = constants.DIFFICULTY_HARD
-                break
+                return constants.DIFFICULTY_HARD
             case "c":
-                while True:
-                    game_instance.difficulty = constants.DIFFICULTY_CUSTOM
-                    return prompt_int("How many mines?: ",
-                                      "\nNot a valid value\n",
-                                      1,
-                                      game_instance.board_size[0] * game_instance.board_size[1] - 1)
+                return constants.DIFFICULTY_CUSTOM
             case _:
                 print("\nNot a valid difficulty")
-    return round((game_instance.board_size[0] + game_instance.board_size[1]) * mine_multiplier)
+
+def get_game_properties() -> dict:
+    """
+    Gets user input for game properties 
+    """
+    print("\n-- New Game --")
+    player_name = input("  Player name: ")
+
+    game_x_size = prompt_int(
+                                "  Give game size X: ",
+                                "Not a valid size",
+                                8,
+                                30)
+    game_y_size = prompt_int(
+                                "  Give game size Y: ",
+                                "Not a valid size",
+                                8,
+                                30)
+
+    difficulty = prompt_difficulty()
+    mine_count = 0
+    if difficulty == constants.DIFFICULTY_CUSTOM:
+        while True:
+            mine_count = prompt_int("How many mines?: ", "\nNot a valid value\n", 1, game_x_size * game_y_size - 1)
+    else:
+        match difficulty:
+            case constants.DIFFICULTY_EASY:
+                mine_count = 
+            case constants.DIFFICULTY_MEDIUM:
+                pass
+            case constants.DIFFICULTY_HARD:
+                pass

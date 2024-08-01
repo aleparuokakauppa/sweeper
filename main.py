@@ -4,9 +4,10 @@ Main program script
 The user interface and the game is started from here
 """
 import sweeperlib
-import prompt_helpers
-from game_logic import Game
-import scoreboard_logging
+import game_constants
+from game_logic import GameHandler
+from prompt_helpers import get_game_properties
+from scoreboard_logging import print_scores
 
 def main_menu():
     """
@@ -24,7 +25,7 @@ def main_menu():
             case 'n':
                 start_game()
             case 's':
-                scoreboard_logging.print_scores()
+                print_scores()
             case 'q':
                 print("Goodbye...")
                 break
@@ -33,39 +34,26 @@ def main_menu():
 
 def start_game():
     """
-    Gets user input for game properties and
-    starts the game.
+    Starts the graphical game
     """
-    print("\n-- New Game --")
-    player_name = input("  Player name: ")
+    game_props = get_game_properties()
 
-    game_x_size = prompt_helpers.prompt_int(
-                                "  Give game size X: ",
-                                "Not a valid size",
-                                8,
-                                30)
-    game_y_size = prompt_helpers.prompt_int(
-                                "  Give game size Y: ",
-                                "Not a valid size",
-                                8,
-                                30)
+    game_handler = GameHandler(game_props["game-size"], game_props["mine-count"])
 
-    game_object = Game((game_x_size, game_y_size))
-
-    game_object.player_name = player_name
-    game_object.init_tile_contents(n_mines=prompt_helpers.prompt_difficulty(game_object))
+    game_handler.difficulty = game_props["difficulty"]
+    game_handler.player_name = game_props["player-name"]
 
     sweeperlib.load_sprites("sprites")
-    sweeperlib.create_window(game_object.board_size_px[0],
-                             game_object.board_size_px[1]+128,
-                             (192, 192, 192, 255),
-                             title="Mine Sweeper")
-
+    sweeperlib.create_window(
+            game_props["board-size-x"],
+            game_props["board-size-y"] + 128,
+            game_constants.GRAY_BG_RGB,
+            title="Mine Sweeper"
+            )
     # Set pyglet handlers
-    sweeperlib.set_mouse_handler(game_object.handle_mouse)
-    sweeperlib.set_draw_handler(game_object.sprite_handler.draw_screen)
-    sweeperlib.set_interval_handler(game_object.sprite_handler.update_timer, 1)
-
+    sweeperlib.set_mouse_handler(game_handler.handle_mouse)
+    sweeperlib.set_draw_handler(game_handler.sprite_handlers.draw_screen)
+    sweeperlib.set_interval_handler(game_handler.sprite_handlers.update_timer, 1)
     sweeperlib.start()
 
 if __name__ == "__main__":

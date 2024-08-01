@@ -1,11 +1,11 @@
 import sweeperlib
-import constants
-from game_state import GameState
+import game_constants
+from game_state import Game
 
 class Sprites:
-    game_state: GameState
+    game_state: Game
 
-    def __init__(self, game_state_instance: GameState):
+    def __init__(self, game_state_instance: Game):
         self.game_state = game_state_instance
 
     def draw_screen(self):
@@ -37,16 +37,16 @@ class Sprites:
 
                 sweeperlib.prepare_sprite(
                             draw_key,
-                            x_index * constants.TILE_SPRITE_SIZE_PX,
-                            y_index * constants.TILE_SPRITE_SIZE_PX)
+                            x_index * game_constants.TILE_SPRITE_SIZE_PX,
+                            y_index * game_constants.TILE_SPRITE_SIZE_PX)
 
         # Prepare sprites for timer
         timer_str = f"{self.game_state.remaining_time:03}"
         for pos, timer_char in enumerate(timer_str):
             sweeperlib.prepare_sprite(
                     f"display-{timer_char}",
-                    (self.game_state.board_size_px[0] - 3 * constants.TILE_SPRITE_SIZE_PX)
-                    + pos * constants.TILE_SPRITE_SIZE_PX - 4,
+                    (self.game_state.board_size_px[0] - 3 * game_constants.TILE_SPRITE_SIZE_PX)
+                    + pos * game_constants.TILE_SPRITE_SIZE_PX - 4,
                     self.game_state.board_size_px[1] + 11)
 
         # Prepare sprites for mine counter
@@ -55,7 +55,7 @@ class Sprites:
         for pos, n_mines_left_char in enumerate(n_mines_left_str):
             sweeperlib.prepare_sprite(
                     f"display-{n_mines_left_char}",
-                    pos * constants.TILE_SPRITE_SIZE_PX + 4,
+                    pos * game_constants.TILE_SPRITE_SIZE_PX + 4,
                     self.game_state.board_size_px[1] + 11)
 
         # Prepare sprite for status face
@@ -66,7 +66,7 @@ class Sprites:
             face_draw_key = "face-win"
         sweeperlib.prepare_sprite(
                 face_draw_key,
-                round(self.game_state.board_size_px[0]/2) - constants.FACE_SPRITE_SIZE_PX/2,
+                round(self.game_state.board_size_px[0]/2) - game_constants.FACE_SPRITE_SIZE_PX/2,
                 self.game_state.board_size_px[1] + 18
                 )
         sweeperlib.draw_sprites()
