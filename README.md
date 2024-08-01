@@ -5,10 +5,9 @@ The program keeps track of previous games and their details with a scoreboard th
 
 The game starts with an initial CLI for game initialization and scoreboard logging
 
-The game itself runs in a GUI with pretty sprites sourced from 
-`https://www.spriters-resource.com/pc_computer/minesweeper/sheet/19849/`
-(Availability checked on 30.07.2024)
-resized to 64x64 pixels
+The game itself runs in a GUI with pretty sprites sourced from [here](https://www.spriters-resource.com/pc_computer/minesweeper/sheet/19849/)
+
+Included font sourced from [here](https://www.nerdfonts.com/font-downloads)
 
 The program uses a single JSON file for a database for simplicity
 
