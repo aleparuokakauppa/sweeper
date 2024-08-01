@@ -25,7 +25,6 @@ class ScoreboardLogger:
             with open(self.DB_FILENAME, 'r', encoding="UTF-8") as db_file:
                 return json.load(db_file)
         except FileNotFoundError:
-            # File not initialized
             return []
 
     def write_scoreboard_data(
@@ -64,7 +63,8 @@ class ScoreboardLogger:
             "player_name": player_name,
             "difficulty": difficulty_str,
             "time_spent": time_spent,
-            "date_time": dt.strftime("%H:%M %Y/%m/%d"),
+            "time": dt.strftime("%H:%M"),
+            "ymd": dt.strftime("%Y/%m/%d"),
             "game_size_x": game_size[0],
             "game_size_y": game_size[1]
         },)
@@ -85,7 +85,8 @@ class ScoreboardLogger:
                             record["game_size_x"],
                             record["game_size_y"],
                             record["time_spent"],
-                            record["date_time"]))
+                            record["time"],
+                            record["ymd"]))
         records = sorted(records, key=lambda record: record[4])
 
         if len(records) != 0:
@@ -93,7 +94,7 @@ class ScoreboardLogger:
             for record in records:
                 print(f"{record[0]}: {record[1]} "
                       f"{record[2]}x{record[3]} "
-                      f"{record[4]}s  @ {record[5]}")
+                      f"{record[4]}s  @ {record[5]} {record[6]}")
             print('\n')
         else:
             print("\nNo previous scores\n")
