@@ -25,13 +25,6 @@ statement checks whether the shift key is down:
 
 if modifiers & sweeperlib.MOD_SHIFT:
     # somethinghappens
-
-Modifications made for this implementation of mine sweeper:
-    - Added additional sprites
-    - Changed default sprite size to 64x64
-    - Removed duck-related functions
-    - Removed option to execute lib as main
-    - Fixed pyglet mouse errors
 """
 
 import pyglet
