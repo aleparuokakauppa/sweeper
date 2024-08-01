@@ -55,7 +55,7 @@ def prompt_difficulty(game_instance: Game) -> int:
                 break
             case "c":
                 game_instance.difficulty = constants.DIFFICULTY_CUSTOM
-                return prompt_int("How many mines?: ", "Not a valid number")
+                return prompt_int("How many mines?: ", "\nNot a valid number\n")
             case _:
-                print("Not a valid difficulty")
+                print("\nNot a valid difficulty\n")
     return round((game_instance.board_size[0] + game_instance.board_size[1]) * mine_multiplier)

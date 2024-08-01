@@ -29,7 +29,7 @@ def main_menu():
                 print("Goodbye...")
                 break
             case _:
-                print("Not a valid action. Try again.")
+                print("\nNot a valid action. Try again.\n")
 
 def start_game():
     """

@@ -14,8 +14,9 @@ The program uses a single JSON file for a database for simplicity
 
 This implementation uses the timer as a countdown, rather than a time counter
 
-The main problem with the game is that it doesn't give a pleasant initial starting position.
-One might lose on the first click.
+The main problem with the game is random mine generation.
+Mines are initialized completely randomly and can result in
+boring games. Also the user can fail on the first click.
 
 The program was tested on Arch Linux and MacOS-Sonoma
 

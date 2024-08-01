@@ -256,8 +256,8 @@ class Game:
             sweeperlib.prepare_sprite(
                     f"display-{timer_char}",
                     (self.board_size_px[0] - 3 * constants.TILE_SPRITE_SIZE_PX)
-                    + pos * constants.TILE_SPRITE_SIZE_PX,
-                    self.board_size_px[1] + 12)
+                    + pos * constants.TILE_SPRITE_SIZE_PX - 4,
+                    self.board_size_px[1] + 11)
 
         # Prepare sprites for mine counter
         n_mines_left: int = self.n_mines - len(self.flagged_tiles)
@@ -265,8 +265,8 @@ class Game:
         for pos, n_mines_left_char in enumerate(n_mines_left_str):
             sweeperlib.prepare_sprite(
                     f"display-{n_mines_left_char}",
-                    pos * constants.TILE_SPRITE_SIZE_PX,
-                    self.board_size_px[1] + 12)
+                    pos * constants.TILE_SPRITE_SIZE_PX + 4,
+                    self.board_size_px[1] + 11)
 
         # Prepare sprite for status face
         face_draw_key = "face-smiley"
@@ -277,26 +277,37 @@ class Game:
         sweeperlib.prepare_sprite(
                 face_draw_key,
                 round(self.board_size_px[0]/2) - constants.FACE_SPRITE_SIZE_PX/2,
-                self.board_size_px[1] + 12
+                self.board_size_px[1] + 18
                 )
         sweeperlib.draw_sprites()
 
-        if self.win:
-            sweeperlib.draw_text(
-                    "You win!",
-                    round(self.board_size_px[0]/3),
-                    round(self.board_size_px[1]/2),
-                    color=(0, 255, 0, 255),
-                    size=64
+        if self.win or self.game_over:
+            sweeperlib.begin_sprite_draw()
+            sweeperlib.prepare_sprite(
+                    "end-plate",
+                    round(self.board_size_px[0]/2) - 192,
+                    round(self.board_size_px[1]/2)
                     )
+            sweeperlib.draw_sprites()
 
-        if self.game_over:
+            win_msg = "You lost!"
+            msg_color = (255, 0, 0, 255)
+            if self.win:
+                win_msg = "You win!"
+                msg_color = (0, 255, 0, 255)
+
             sweeperlib.draw_text(
-                    "You lost!",
-                    round(self.board_size_px[0]/3),
-                    round(self.board_size_px[1]/2),
-                    color=(255, 0, 0, 255),
-                    size=64
+                    win_msg,
+                    round(self.board_size_px[0]/2) - 174,
+                    round(self.board_size_px[1]/2) + 82,
+                    color=msg_color,
+                    size=48
+                    )
+            sweeperlib.draw_text(
+                    "Click to return.",
+                    round(self.board_size_px[0]/2) - 174,
+                    round(self.board_size_px[1]/2) + 48,
+                    size=24
                     )
 
     def draw_timer(self, _):
