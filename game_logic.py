@@ -19,6 +19,7 @@ class Game:
     difficulty: int
     player_name: str
     n_mines: int
+    turns_used: int
 
     # Game board that logic is applied to
     game_board: list[list[str]]
@@ -29,7 +30,6 @@ class Game:
     # Board size in pixels according to window
     board_size_px: tuple[int, int]
 
-    # Set game properties
     game_over: bool = False
     win: bool = False
     game_board: list[list[str]] = []
@@ -53,6 +53,7 @@ class Game:
         self.explored_tiles = []
         self.flagged_tiles = []
         self.n_mines = 0
+        self.turns_used = 0
         self.board_size: tuple[int, int] = board_size
 
         if self.board_size[0] < 8 or self.board_size[1] < 8:
@@ -298,15 +299,15 @@ class Game:
 
             sweeperlib.draw_text(
                     win_msg,
-                    round(self.board_size_px[0]/2) - 174,
-                    round(self.board_size_px[1]/2) + 82,
+                    (round(self.board_size_px[0]/2) - 174,
+                    round(self.board_size_px[1]/2) + 82),
                     color=msg_color,
                     size=48
                     )
             sweeperlib.draw_text(
                     "Click to return.",
-                    round(self.board_size_px[0]/2) - 174,
-                    round(self.board_size_px[1]/2) + 48,
+                    (round(self.board_size_px[0]/2) - 174,
+                    round(self.board_size_px[1]/2) + 48),
                     size=24
                     )
 
@@ -363,6 +364,7 @@ class Game:
         # Match the mouse button with an action
         match m_button:
             case sweeperlib.MOUSE_LEFT:
+                self.turns_used += 1
                 self.guess_tile(selected_tile)
 
             case sweeperlib.MOUSE_RIGHT:
@@ -386,6 +388,7 @@ class Game:
             self.score_logger.write_scoreboard_data(
                 self.player_name,
                 self.difficulty,
+                self.turns_used,
                 constants.STARTING_TIME - self.remaining_time,
-                (self.board_size[0],
-                self.board_size[1]))
+                target_explored_tile_count - len(self.explored_tiles),
+                self.board_size)

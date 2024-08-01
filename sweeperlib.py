@@ -37,7 +37,6 @@ Modifications made for this implementation of mine sweeper:
 import pyglet
 from pyglet.gl import glEnable, GL_TEXTURE_2D
 from pyglet.window import mouse
-from pyglet import font
 
 MOUSE_LEFT = mouse.LEFT
 MOUSE_MIDDLE = mouse.MIDDLE
@@ -47,7 +46,7 @@ MOD_SHIFT = pyglet.window.key.MOD_SHIFT
 MOD_CTRL = pyglet.window.key.MOD_CTRL
 MOD_ALT = pyglet.window.key.MOD_ALT
 
-font.add_file("fonts/big_blue_term.ttf")
+pyglet.font.add_file("fonts/big_blue_term.ttf")
 
 # Variables required for drawing graphics are saved to this dictionary so that
 # they can be easily accessed in all functions. A similar solution is
@@ -359,7 +358,11 @@ def draw_background():
 
     graphics["background"].draw()
 
-def draw_text(text, x, y, color=(0, 0, 0, 255), font="BigBlueTerm437 Nerd Font Mono", size=32):
+def draw_text(text,
+              pos: tuple[int, int],
+              color=(0, 0, 0, 255),
+              font="BigBlueTerm437 Nerd Font Mono",
+              size=32):
     """
     Draws text on the screen. Can be used if you want to write something to
     the game window (e.g. counters or instructions). Default font is serif,
@@ -381,7 +384,7 @@ def draw_text(text, x, y, color=(0, 0, 0, 255), font="BigBlueTerm437 Nerd Font M
         font_name=font,
         font_size=size,
         color=color,
-        x=x, y=y,
+        x=pos[0], y=pos[1],
         anchor_x="left", anchor_y="bottom"
     )
     text_box.draw()

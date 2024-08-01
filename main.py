@@ -36,12 +36,19 @@ def start_game():
     Gets user input for game properties and
     starts the game.
     """
-    print()
-    print("-- New Game --")
-    player_name = input("Player name: ")
+    print("\n-- New Game --")
+    player_name = input("  Player name: ")
 
-    game_x_size = prompt_helpers.prompt_int("Give game size X: ", "Not a valid size")
-    game_y_size = prompt_helpers.prompt_int("Give game size Y: ", "Not a valid size")
+    game_x_size = prompt_helpers.prompt_int(
+                                "  Give game size X: ",
+                                "Not a valid size",
+                                8,
+                                30)
+    game_y_size = prompt_helpers.prompt_int(
+                                "  Give game size Y: ",
+                                "Not a valid size",
+                                8,
+                                30)
 
     game_object = Game((game_x_size, game_y_size))
 
