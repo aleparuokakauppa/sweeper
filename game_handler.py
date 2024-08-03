@@ -10,7 +10,8 @@ import sweeperlib
 import game_constants
 import scoreboard_logging
 from game_state import Game
-from sprite_helper import Sprites
+from sprite_helper import SpriteHelper
+from prompt_helpers import get_game_properties
 
 class GameHandler:
     """
@@ -23,18 +24,36 @@ class GameHandler:
     turns_used: int
 
     game_state: Game
-    sprite_handlers: Sprites
+    sprite_helper: SpriteHelper
 
-    def __init__(self, board_size: tuple[(int, int)], n_mines: int):
+    def start_game(self):
         """
-        Initializes the Game object
+        Initializes the Game object and starts the game
 
         Is the owner of game state
-
-        :params tuple[(int, int)] board_size: (x,y) format board max size
         """
-        self.game_state = Game(board_size, n_mines)
-        self.sprite_handlers = Sprites(self.game_state)
+        game_props = get_game_properties()
+
+        self.game_state = Game(game_props["board-size"], game_props["mine-count"])
+
+        self.sprite_helper = SpriteHelper(self.game_state)
+
+        self.difficulty = game_props["difficulty"]
+        self.player_name = game_props["player-name"]
+
+        sweeperlib.load_sprites("sprites")
+        sweeperlib.create_window(
+                game_props["board-width-px"],
+                game_props["board-height-px"] + 128,
+                game_constants.GRAY_BG_RGB,
+                title="Mine Sweeper"
+                )
+
+        # Set pyglet handlers
+        sweeperlib.set_mouse_handler(self.handle_mouse)
+        sweeperlib.set_draw_handler(self.sprite_helper.draw_screen)
+        sweeperlib.set_interval_handler(self.sprite_helper.update_timer, 1)
+        sweeperlib.start()
 
     def get_tile_index_at_coordinates(self, position: tuple[(int, int)]) -> tuple[(int, int)]:
         """

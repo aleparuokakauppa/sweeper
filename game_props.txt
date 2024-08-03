@@ -1,0 +1,5 @@
+game props:
+- game-size: tuple[int, int]
+- mine-count: int
+- player-name: str
+- difficulty: int

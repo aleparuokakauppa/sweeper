@@ -1,8 +1,8 @@
 """
 Helper functions for getting valid user inputs
 """
-import constants
 from game_logic import GameHandler
+import game_constants
 
 def prompt_int(message: str, err_message: str, prompt_min: int, prompt_max: int) -> int:
     """
@@ -63,19 +63,25 @@ def get_game_properties() -> dict:
     """
     Gets user input for game properties 
     """
+
+    # TODO
+    return {}
+
     print("\n-- New Game --")
     player_name = input("  Player name: ")
 
     game_x_size = prompt_int(
-                                "  Give game size X: ",
-                                "Not a valid size",
-                                8,
-                                30)
+                        "  Give game size X: ",
+                        "Not a valid size",
+                        8,
+                        30
+                    )
     game_y_size = prompt_int(
-                                "  Give game size Y: ",
-                                "Not a valid size",
-                                8,
-                                30)
+                        "  Give game size Y: ",
+                        "Not a valid size",
+                        8,
+                        30
+                    )
 
     difficulty = prompt_difficulty()
     mine_count = 0
@@ -85,7 +91,7 @@ def get_game_properties() -> dict:
     else:
         match difficulty:
             case constants.DIFFICULTY_EASY:
-                mine_count = 
+                mine_count
             case constants.DIFFICULTY_MEDIUM:
                 pass
             case constants.DIFFICULTY_HARD:

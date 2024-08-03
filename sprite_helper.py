@@ -2,23 +2,25 @@ import sweeperlib
 import game_constants
 from game_state import Game
 
-class Sprites:
+class SpriteHelper:
     game_state: Game
 
     def __init__(self, game_state_instance: Game):
+        """
+        Initializes the SpriteHelper object with
+        the game state parameter
+
+        TODO cut
+        Ensures that the object cannot be used without
+        a game state instance
+        """
         self.game_state = game_state_instance
 
-    def draw_screen(self):
+    def prepare_tile_sprites(self):
         """
-        Main-game draw field handler for the pyglet program.
-        Draws sprites based on the `game_board` string contents
-        of each tile with additional draw logic
+        Prepares the tile sprites to be drawn with
+        `sweeperlib.draw_sprites()`
         """
-        sweeperlib.clear_window()
-        sweeperlib.draw_background()
-        sweeperlib.begin_sprite_draw()
-
-        # Prepare tile sprites
         for y_index, row in enumerate(self.game_state.game_board):
             for x_index, tile_content in enumerate(row):
                 draw_key = " "
@@ -40,6 +42,7 @@ class Sprites:
                             x_index * game_constants.TILE_SPRITE_SIZE_PX,
                             y_index * game_constants.TILE_SPRITE_SIZE_PX)
 
+    def prepare_timer_sprites(self):
         # Prepare sprites for timer
         timer_str = f"{self.game_state.remaining_time:03}"
         for pos, timer_char in enumerate(timer_str):
@@ -49,6 +52,7 @@ class Sprites:
                     + pos * game_constants.TILE_SPRITE_SIZE_PX - 4,
                     self.game_state.board_size_px[1] + 11)
 
+    def prepare_mine_counter_sprites(self):
         # Prepare sprites for mine counter
         n_mines_left: int = self.game_state.n_mines - len(self.game_state.flagged_tiles)
         n_mines_left_str: str = f"{n_mines_left:03}"
@@ -58,6 +62,7 @@ class Sprites:
                     pos * game_constants.TILE_SPRITE_SIZE_PX + 4,
                     self.game_state.board_size_px[1] + 11)
 
+    def prepare_face_sprite(self):
         # Prepare sprite for status face
         face_draw_key = "face-smiley"
         if self.game_state.game_over:
@@ -69,6 +74,20 @@ class Sprites:
                 round(self.game_state.board_size_px[0]/2) - game_constants.FACE_SPRITE_SIZE_PX/2,
                 self.game_state.board_size_px[1] + 18
                 )
+
+    def draw_screen(self):
+        """
+        Main-game draw field handler for the pyglet program.
+        """
+        sweeperlib.clear_window()
+        sweeperlib.draw_background()
+        sweeperlib.begin_sprite_draw()
+        
+        self.prepare_tile_sprites()
+        self.prepare_timer_sprites()
+        self.prepare_mine_counter_sprites()
+        self.prepare_face_sprite()
+
         sweeperlib.draw_sprites()
 
         if self.game_state.win or self.game_state.game_over:
