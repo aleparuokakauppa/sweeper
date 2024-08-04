@@ -2,13 +2,14 @@
 Reader and writer for scoreboard logging of the minesweeper game
 
 Uses a JSON file as a db for simplicity
+from which migration should be relatively simple
 """
 
 import datetime
 import json
-import constants
+from app.game import game_constants
 
-DB_FILENAME = "game_scores.json"
+DB_FILENAME = "app/game_scores.json"
 
 def get_scoreboard_data():
     """
@@ -34,7 +35,7 @@ def write_scoreboard_data(
     scoreboard data.
 
     :params str player_name: Player name
-    :params int difficulty: Difficulty identifier found in`constants.py`
+    :params int difficulty: Difficulty identifier found in`game_constants.py`
     :params int turns_used: How many turns were played before game ended
     :params int time_spent: How much time was spent during a game
     :params int to_reveal: How many tiles were to be revealed
@@ -46,13 +47,13 @@ def write_scoreboard_data(
 
     difficulty_str = ""
     match difficulty:
-        case constants.DIFFICULTY_EASY:
+        case game_constants.DIFFICULTY_EASY:
             difficulty_str = "Easy"
-        case constants.DIFFICULTY_MEDIUM:
+        case game_constants.DIFFICULTY_MEDIUM:
             difficulty_str = "Medium"
-        case constants.DIFFICULTY_HARD:
+        case game_constants.DIFFICULTY_HARD:
             difficulty_str = "Hard"
-        case constants.DIFFICULTY_CUSTOM:
+        case game_constants.DIFFICULTY_CUSTOM:
             difficulty_str = "Custom"
 
     score_data = ({
