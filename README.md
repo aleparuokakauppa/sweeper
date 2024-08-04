@@ -30,8 +30,8 @@ Program tested on Arch Linux and MacOS
     ```
 
 ## External dependencies:
-- `pyglet`
-- included `sweeperlib.py` library
+- `pyglet <2.0` compatibility with the pyglet v2.0 is not tested
+  Tested on v1.5.29
 
 ## Screenshot
 ![Screenshot](https://raw.githubusercontent.com/aleparuokakauppa/sweeper/master/images/mine_sweeper_screenshot.jpg?raw=true)
