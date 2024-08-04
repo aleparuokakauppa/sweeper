@@ -27,9 +27,9 @@ if modifiers & sweeperlib.MOD_SHIFT:
     # somethinghappens
 """
 
-import pyglet
-from pyglet.gl import glEnable, GL_TEXTURE_2D
-from pyglet.window import mouse
+import pyglet # pylint: disable=import-error
+from pyglet.gl import glEnable, GL_TEXTURE_2D # pylint: disable=import-error
+from pyglet.window import mouse # pylint: disable=import-error
 
 MOUSE_LEFT = mouse.LEFT
 MOUSE_MIDDLE = mouse.MIDDLE
