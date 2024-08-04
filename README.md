@@ -30,7 +30,7 @@ Program tested on Arch Linux and MacOS
     ```
 
 ## External dependencies:
-- `pyglet <2.0`
+- `pyglet < v2.0`
   Tested on v1.5.29
 
 ## Screenshot
