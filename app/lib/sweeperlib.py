@@ -39,7 +39,7 @@ MOD_SHIFT = pyglet.window.key.MOD_SHIFT
 MOD_CTRL = pyglet.window.key.MOD_CTRL
 MOD_ALT = pyglet.window.key.MOD_ALT
 
-pyglet.font.add_file("fonts/big_blue_term.ttf")
+pyglet.resource.add_font("resources/fonts/big_blue_term.ttf")
 
 # Variables required for drawing graphics are saved to this dictionary so that
 # they can be easily accessed in all functions. A similar solution is
@@ -62,20 +62,14 @@ glEnable(GL_TEXTURE_2D)
 
 def load_sprites(path):
     """
-    Loads the default sprites used for minesweeper tiles. The images are found
-    from the sprites folder, and you can modify them to your liking. If you
-    want to add more graphics, you can use this function as an example of how
-    to load them.
-    
+    Loads the sprites used for minesweeper tiles.
+
     The function uses Pyglet's resouce module which loads the images in a
     rather intelligent way. References to individual images are stored to a 
-    dictionary so that they can be readily accessed later. The dictionary keys
-    0 to 8 correspond to opened tiles, x to mines, f to flags, and space to 
-    unopened tiles.
-    
-    Path should be given as relative, from where your code files are (see
-    example at the end of this module).
-    
+    dictionary so that they can be readily accessed later.
+
+    Path should be given as relative.
+
     :param str path: path to the sprites folder
     """
 
@@ -83,27 +77,27 @@ def load_sprites(path):
     images = {}
 
     # Load tile sprites
-    images['0'] = pyglet.resource.image("tiles/tile_empty.png")
+    images['0'] = pyglet.resource.image(f"{path}/tiles/tile_empty.png")
     for i in range(1, 9):
-        images[str(i)] = pyglet.resource.image(f"tiles/tile_{i}.png")
-    images['x'] = pyglet.resource.image("tiles/tile_mine.png")
-    images[' '] = pyglet.resource.image("tiles/tile_back.png")
-    images['f'] = pyglet.resource.image("tiles/tile_flag.png")
-    images['X'] = pyglet.resource.image("tiles/tile_mine_explode.png")
-    images['F'] = pyglet.resource.image("tiles/tile_mine_incorrect.png")
+        images[str(i)] = pyglet.resource.image(f"{path}/tiles/tile_{i}.png")
+    images['x'] = pyglet.resource.image(f"{path}/tiles/tile_mine.png")
+    images[' '] = pyglet.resource.image(f"{path}/tiles/tile_back.png")
+    images['f'] = pyglet.resource.image(f"{path}/tiles/tile_flag.png")
+    images['X'] = pyglet.resource.image(f"{path}/tiles/tile_mine_explode.png")
+    images['F'] = pyglet.resource.image(f"{path}/tiles/tile_mine_incorrect.png")
 
     # Load face sprites
-    images["face-smiley"] = pyglet.resource.image("faces/face-smiley.png")
-    images["face-lose"] = pyglet.resource.image("faces/face-lose.png")
-    images["face-win"] = pyglet.resource.image("faces/face-win.png")
+    images["face-smiley"] = pyglet.resource.image(f"{path}/faces/face-smiley.png")
+    images["face-lose"] = pyglet.resource.image(f"{path}/faces/face-lose.png")
+    images["face-win"] = pyglet.resource.image(f"{path}/faces/face-win.png")
 
     # Load display sprites
     for i in range(0, 10):
-        images[f"display-{i}"] = pyglet.resource.image(f"display/display-{i}.png")
-    images["display-empty"] = pyglet.resource.image("display/display-empty.png")
-    images["display--"] = pyglet.resource.image("display/display-line.png")
+        images[f"display-{i}"] = pyglet.resource.image(f"{path}/display/display-{i}.png")
+    images["display-empty"] = pyglet.resource.image(f"{path}/display/display-empty.png")
+    images["display--"] = pyglet.resource.image(f"{path}/display/display-line.png")
 
-    images["end-plate"] = pyglet.resource.image("end_plate.png")
+    images["end-plate"] = pyglet.resource.image(f"{path}/end_plate.png")
 
     graphics["images"] = images
 

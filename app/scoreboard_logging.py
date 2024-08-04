@@ -6,7 +6,7 @@ Uses a JSON file as a db for simplicity
 
 import datetime
 import json
-import game_constants
+from app.game import game_constants
 
 DB_FILENAME = "game_scores.json"
 

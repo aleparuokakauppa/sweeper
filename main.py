@@ -3,8 +3,8 @@ Main program script
 
 The user interface and the game is started from here
 """
-from scoreboard_logging import print_scores
-from game_handler import GameHandler
+from app import print_scores
+from app.game.game_handler import GameHandler
 
 def main_menu():
     """

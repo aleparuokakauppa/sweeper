@@ -1,0 +1,24 @@
+"""
+Game constants
+"""
+STARTING_TIME = 999
+
+TILE_SPRITE_SIZE_PX = 64
+FACE_SPRITE_SIZE_PX = 96
+
+DIFFICULTY_EASY = 1
+DIFFICULTY_MEDIUM = 2
+DIFFICULTY_HARD = 3
+DIFFICULTY_CUSTOM = 4
+
+GRAY_BG_RGBA = (192, 192, 192, 255)
+
+GAME_BOARD_MIN_X_SIZE = 8
+GAME_BOARD_MAX_X_SIZE = 30
+
+GAME_BOARD_MIN_Y_SIZE = 8
+GAME_BOARD_MAX_Y_SIZE = 30
+
+DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1),
+              ( 0, -1),          ( 0, 1),
+              ( 1, -1), ( 1, 0), ( 1, 1)]
