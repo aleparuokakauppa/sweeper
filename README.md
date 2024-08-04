@@ -34,4 +34,4 @@ Program tested on Arch Linux and MacOS
   Tested on v1.5.29
 
 ## Screenshot
-![Screenshot](https://raw.githubusercontent.com/aleparuokakauppa/sweeper/master/images/mine_sweeper_screenshot.jpg?raw=true)
+![Screenshot](https://raw.githubusercontent.com/aleparuokakauppa/sweeper/master/resources/images/mine_sweeper_screenshot.jpg?raw=true)
