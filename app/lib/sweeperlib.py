@@ -60,7 +60,7 @@ handlers = {
 
 glEnable(GL_TEXTURE_2D)
 
-def load_sprites(path):
+def load_sprites(path: str):
     """
     Loads the sprites used for minesweeper tiles.
 
@@ -70,7 +70,7 @@ def load_sprites(path):
 
     Path should be given as relative.
 
-    :param str path: path to the sprites folder
+    :param list[str] path: list of paths to be loaded
     """
 
     pyglet.resource.path = [path]
@@ -324,7 +324,6 @@ def close():
     restart the game after this, you need to create the window and set the
     handlers again.
     """
-
     for handler in handlers["timeouts"]:
         pyglet.clock.unschedule(handler)
     pyglet.app.exit()

@@ -1,8 +1,19 @@
+"""
+Sprite helper module for drawing sprites
+and text on the pyglet window
+"""
+
 from app.lib import sweeperlib
 from app.game import game_constants
 from app.game.game_state import Game
 
 class SpriteHelper:
+    """
+    Sprite helper object for drawing sprites and text
+    on the pyglet window
+
+    Uses a reference of a Game to determine draw logic
+    """
     game_state: Game
 
     def __init__(self, game_state_instance: Game):
@@ -25,8 +36,7 @@ class SpriteHelper:
 
                 if (x_index, y_index) in self.game_state.flagged_tiles:
                     draw_key = 'f'
-                    if self.game_state.game_over and self.game_state.win == False:
-                        # TODO check logic
+                    if self.game_state.game_over and self.game_state.win is False:
                         if tile_content == 'x':
                             draw_key = 'x'
                         else:
@@ -122,7 +132,7 @@ class SpriteHelper:
         sweeperlib.clear_window()
         sweeperlib.draw_background()
         sweeperlib.begin_sprite_draw()
-        
+
         self.prepare_tile_sprites()
         self.prepare_timer_sprites()
         self.prepare_mine_counter_sprites()

@@ -7,7 +7,7 @@ Includes methods to manipulate state and act game logic
 """
 
 import random
-from .game_constants import *
+from .game_constants import TILE_SPRITE_SIZE_PX, DIRECTIONS, STARTING_TIME
 
 class Game:
     """

@@ -2,13 +2,14 @@
 Reader and writer for scoreboard logging of the minesweeper game
 
 Uses a JSON file as a db for simplicity
+from which migration should be relatively simple
 """
 
 import datetime
 import json
 from app.game import game_constants
 
-DB_FILENAME = "game_scores.json"
+DB_FILENAME = "app/game_scores.json"
 
 def get_scoreboard_data():
     """

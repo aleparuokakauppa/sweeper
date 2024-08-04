@@ -1,3 +1,7 @@
+"""
+Game sub-package for mine sweeper
+"""
+
 from .game_state import Game
 from .game_handler import GameHandler
 from .game_constants import *

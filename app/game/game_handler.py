@@ -2,12 +2,14 @@
 Handler for starting the graphical game
 """
 from math import floor
-from .game_constants import *
-from .game_state import Game
+
 from app import scoreboard_logging
+from app import prompt_helpers
 from app.sprite_helper import SpriteHelper
-import app.prompt_helpers as prompt_helpers
-import app.lib.sweeperlib as sweeperlib
+from app.lib import sweeperlib
+
+from .game_constants import TILE_SPRITE_SIZE_PX, STARTING_TIME, GRAY_BG_RGBA
+from .game_state import Game
 
 class GameHandler:
     """
@@ -45,7 +47,7 @@ class GameHandler:
 
     def start_game(self):
         """
-        Initializes the Game object and starts the game
+        Creates the pyglet window and starts the event loop
         """
         sweeperlib.load_sprites("resources/sprites")
 
@@ -120,7 +122,6 @@ class GameHandler:
                 left_to_explore,
                 self.game_state.board_size)
 
-            print("Closing sweeperlib in `handle_mouse`")
             sweeperlib.close()
 
         max_board_x, max_board_y = self.game_state.board_size_px
