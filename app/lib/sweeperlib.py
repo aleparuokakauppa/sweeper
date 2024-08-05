@@ -115,7 +115,7 @@ def create_window(width=800, height=600, bg_color=(240, 240, 240, 255), title="s
     """
 
     if graphics["window"] is None:
-        graphics["window"] = pyglet.window.Window(width, height, resizable=True)
+        graphics["window"] = pyglet.window.Window(width, height, resizable=False)
         graphics["bg_color"] = bg_color
         graphics["background"] = pyglet.sprite.Sprite(
             pyglet.image.SolidColorImagePattern(bg_color).create_image(width, height)

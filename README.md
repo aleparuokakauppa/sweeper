@@ -19,6 +19,12 @@ boring games. Also the user can fail on the first click.
 
 The program was tested on Arch Linux on Mac-OS
 
+## Note
+On Mac-OS ARM64 closing the event loop results in unexpected behaviour where
+the entire program closes instead of returning from the event-loop start.
+Fixing this is outside of the scope of this project and may be considered as
+platform specific behaviour.
+
 ## Usage
 - Install dependencies 
     ```
