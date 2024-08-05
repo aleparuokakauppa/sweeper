@@ -28,7 +28,7 @@ platform specific behaviour.
 ## Usage
 - Install dependencies 
     ```
-    $ pip install pyglet
+    $ pip install pyglet==1.5.29
     ```
 - Start the game
     ```
