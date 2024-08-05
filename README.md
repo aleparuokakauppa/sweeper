@@ -17,16 +17,16 @@ The main problem with the game is random mine generation.
 Mines are initialized completely randomly and can result in
 boring games. Also the user can fail on the first click.
 
-Program tested on Arch Linux and MacOS
+The program was tested on Arch Linux on Mac-OS
 
 ## Usage
 - Install dependencies 
-    ```bash
-    pip install pyglet
+    ```
+    $ pip install pyglet
     ```
 - Start the game
-    ```bash
-    python main.py
+    ```
+    $ python main.py
     ```
 
 ## External dependencies:
