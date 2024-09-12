@@ -102,6 +102,8 @@ class Game:
         if the clicked tile is a mine, only the mine is marked
         as explored
 
+        As a side effect updates game_state.win according to game state
+
         :params tuple[(int, int)] tile: starting tile for guess algorithm
         """
         # Check if the given tile is within boundaries
